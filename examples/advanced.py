@@ -126,6 +126,6 @@ versionize(
     get_docs=get_docs,
     docs_url='/docs',
     enable_latest=True,
-    latest_prefix='/',
+    latest_prefix='/latest',
     swagger_ui_parameters={'defaultModelsExpandDepth': -1}
 )

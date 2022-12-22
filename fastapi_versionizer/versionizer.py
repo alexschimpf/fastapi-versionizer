@@ -63,6 +63,7 @@ def versionize(
         - Adds "/latest" endpoints, which is an alias for the latest version endpoints
     :param latest_prefix:
         - Defines the prefix use for the "latest" endpoints (if `enabled_latest` is True)
+        - This cannot be "/"
     :param get_openapi:
         - A function that takes in a versioned FastAPI sub-application and a version (in tuple forms)
         - and returns an OpenAPI schema dict.
@@ -90,6 +91,9 @@ def versionize(
         - For example, if you want to use `swagger_ui_parameters` for all version docs pages, you would
         - set this in kwargs.
     """
+
+    if latest_prefix == '/':
+        raise ValueError('latest_prefix cannot be "/"')
 
     version_route_mapping = _get_version_route_mapping(app=app, default_version=default_version)
 
@@ -141,7 +145,7 @@ def versionize(
     ]
 
     @app.get('/versions', response_model=VersionsModel, tags=['Versions'])
-    async def versions_():
+    async def get_versions_():
         return VersionsModel(versions=[
             VersionModel(version=version_format.format(major=major, minor=minor))
             for (major, minor) in versions
@@ -151,7 +155,7 @@ def versionize(
         docs_url = cast(str, kwargs.get('main_docs_url') or kwargs.get('docs_url'))
 
         @app.get(docs_url, response_class=HTMLResponse, include_in_schema=False)
-        def docs():
+        def get_docs_():
             return get_main_docs(versions)
 
 
@@ -214,12 +218,12 @@ def _build_versioned_app(
 
     if get_docs and docs_url:
         @versioned_app.get(cast(str, docs_url), include_in_schema=False)
-        def docs():
+        def get_docs_():
             return get_docs(version)
 
     if get_redoc and redoc_url:
         @versioned_app.get(cast(str, redoc_url), include_in_schema=False)
-        def redoc():
+        def get_redoc_():
             return get_redoc(version)
 
     return versioned_app
