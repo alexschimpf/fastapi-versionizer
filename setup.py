@@ -7,6 +7,7 @@ setup(
     name='fastapi_versionizer',
     version='0.1.0',
     author='Alex Schimpf',
+    author_email='aschimpf1@gmail.com',
     description='API versionizer for FastAPI web applications',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -24,8 +25,7 @@ setup(
     ],
     install_requires=[
         'fastapi>=0.56.0',
-        'starlette',
-        'pydantic'
+        'starlette'
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.6'
 )

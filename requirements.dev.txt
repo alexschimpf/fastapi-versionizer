@@ -1,0 +1,7 @@
+fastapi>=0.56.0
+starlette
+pytest==7.0.1
+mypy==0.971
+pydantic==1.9.2
+twine==3.8.0
+types-setuptools==65.6.0.2

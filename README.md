@@ -8,7 +8,7 @@ This project fixes some of the issues with `fastapi_versioning` and adds some ad
 `pip install fastapi-versionizer`
 
 ## Examples
-You can find examples in the [examples](/examples) directory.
+You can find examples in the [examples](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples) directory.
 
 ## Details
 - Routes can be annotated using the `@api_version` decorator
@@ -23,10 +23,10 @@ You can find examples in the [examples](/examples) directory.
     - You can generate a Swagger/Redoc page for this, which exposes a single auto-generated "/versions" endpoint
     - Or you can generate your own custom HTML page
     - By default, no main docs page is generated
-    - See the [Advanced Example](/examples/advanced.py) for more details
+    - See the [Advanced Example](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/advanced.py) for more details
   - You can generate each versioned Swagger page using `get_docs` and `docs_url`
     - This is useful if you need to want to customize your Swagger HTML using `fastapi.openapi.docs.get_swagger_ui_html`
-    - See the [Advanced Example](/examples/advanced.py) for more details
+    - See the [Advanced Example](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/advanced.py) for more details
   - You can generate each versioned Redoc page using `get_redoc` and `redoc_url`
     - This is useful if you need to want to customize your Redoc HTML using `fastapi.openapi.docs.get_redoc_html`
     - The usage of this is very similar to `get_docs`
@@ -36,4 +36,4 @@ You can find examples in the [examples](/examples) directory.
     - If you want a custom title and description for each versioned docs page, you can use `get_docs` and/or `get_redoc`
     - Note: If you want docs pages to be generated, you must pass either `docs_url` or `redoc_url` as kwargs
     - Note: If you want to specify custom `responses`, these must be defined on your FastAPI app (not via `kwargs`)
-      - See the [Advanced Example](/examples/advanced.py) for more details
+      - See the [Advanced Example](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/advanced.py) for more details

@@ -6,7 +6,7 @@ from examples.simple import app
 
 class TestSimple(TestCase):
 
-    def test_simple(self):
+    def test_simple(self) -> None:
         test_client = TestClient(app)
 
         self.assertEqual(404, test_client.get('/').status_code)

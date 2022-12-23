@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -15,24 +17,24 @@ class TestModel(BaseModel):
 
 
 @app.post('/do_something', tags=['Something'], response_model=TestModel)
-async def do_something(test: TestModel):
+async def do_something(test: TestModel) -> Any:
     return test
 
 
 @app.post('/do_something_else', tags=['Something Else'])
-async def do_something_else():
+async def do_something_else() -> Any:
     return {'message': 'something else'}
 
 
 @api_version(2)
 @app.post('/do_something', tags=['Something'])
-async def do_something():
+async def do_something_v2() -> Any:
     return {'message': 'something'}
 
 
 @api_version(2)
 @app.post('/do_something_new', tags=['Something New'])
-async def do_something_new():
+async def do_something_new() -> Any:
     return {'message': 'something new'}
 
 

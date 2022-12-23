@@ -36,24 +36,24 @@ app = FastAPI(
 
 
 @app.post('/do_something', tags=['Something'], response_model=TestModel)
-async def do_something(test: TestModel):
+async def do_something(test: TestModel) -> Any:
     return test
 
 
 @app.post('/do_something_else', tags=['Something Else'])
-async def do_something_else():
+async def do_something_else() -> Any:
     return {'message': 'something else'}
 
 
 @api_version(2)
 @app.post('/do_something', tags=['Something'])
-async def do_something():
+async def do_something_v2() -> Any:
     return {'message': 'something'}
 
 
 @api_version(2)
 @app.post('/do_something_new', tags=['Something New'])
-async def do_something_new():
+async def do_something_new() -> Any:
     return {'message': 'something new'}
 
 
@@ -72,7 +72,7 @@ def get_openapi(app_: FastAPI, _: Tuple[int, int]) -> Dict[str, Any]:
     return openapi_schema
 
 
-def get_docs(version: tuple[int, int]) -> HTMLResponse:
+def get_docs(version: Tuple[int, int]) -> HTMLResponse:
     version_prefix = f'/v{version[0]}'
     return get_swagger_ui_html(
         openapi_url=f'{version_prefix}{app.openapi_url}',
@@ -82,7 +82,7 @@ def get_docs(version: tuple[int, int]) -> HTMLResponse:
     )
 
 
-def get_main_docs(_: List[tuple[int, int]]) -> HTMLResponse:
+def get_main_docs(_: List[Tuple[int, int]]) -> HTMLResponse:
     """
     This will expose a single, auto-generated "/versions" endpoint via a Swagger page.
     """

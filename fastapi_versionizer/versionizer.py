@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast
+from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
@@ -41,10 +41,10 @@ def versionize(
     default_version: Tuple[int, int] = (1, 0),
     enable_latest: bool = False,
     latest_prefix: str = '/latest',
-    get_openapi: Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]] = None,
-    get_main_docs: Callable[[List[Tuple[int, int]]], HTMLResponse] = None,
-    get_docs: Callable[[Tuple[int, int]], HTMLResponse] = None,
-    get_redoc: Callable[[Tuple[int, int]], HTMLResponse] = None,
+    get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
+    get_main_docs: Union[Callable[[List[Tuple[int, int]]], HTMLResponse], None] = None,
+    get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
+    get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     **kwargs: Any
 ) -> None:
     """
@@ -145,7 +145,7 @@ def versionize(
     ]
 
     @app.get('/versions', response_model=VersionsModel, tags=['Versions'])
-    async def get_versions_():
+    async def get_versions_() -> VersionsModel:
         return VersionsModel(versions=[
             VersionModel(version=version_format.format(major=major, minor=minor))
             for (major, minor) in versions
@@ -155,8 +155,8 @@ def versionize(
         docs_url = cast(str, kwargs.get('main_docs_url') or kwargs.get('docs_url'))
 
         @app.get(docs_url, response_class=HTMLResponse, include_in_schema=False)
-        def get_docs_():
-            return get_main_docs(versions)
+        def get_docs_() -> HTMLResponse:
+            return get_main_docs(versions)  # type: ignore
 
 
 def _get_version_route_mapping(
@@ -188,9 +188,9 @@ def _build_versioned_app(
     version: Tuple[int, int],
     semver: str,
     unique_routes: Dict[str, BaseRoute],
-    get_openapi: Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]] = None,
-    get_docs: Callable[[Tuple[int, int]], HTMLResponse] = None,
-    get_redoc: Callable[[Tuple[int, int]], HTMLResponse] = None,
+    get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
+    get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
+    get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     **kwargs: Any
 ) -> FastAPI:
     docs_url = kwargs.pop('docs_url', None)
@@ -213,17 +213,17 @@ def _build_versioned_app(
 
     if get_openapi:
         def openapi() -> Dict[str, Any]:
-            return get_openapi(versioned_app, version)
-        versioned_app.openapi = openapi
+            return get_openapi(versioned_app, version)  # type: ignore
+        versioned_app.openapi = openapi  # type: ignore
 
     if get_docs and docs_url:
         @versioned_app.get(cast(str, docs_url), include_in_schema=False)
-        def get_docs_():
-            return get_docs(version)
+        def get_docs_() -> HTMLResponse:
+            return get_docs(version)  # type: ignore
 
     if get_redoc and redoc_url:
         @versioned_app.get(cast(str, redoc_url), include_in_schema=False)
-        def get_redoc_():
-            return get_redoc(version)
+        def get_redoc_() -> HTMLResponse:
+            return get_redoc(version)  # type: ignore
 
     return versioned_app
