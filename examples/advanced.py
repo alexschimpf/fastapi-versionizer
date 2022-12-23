@@ -82,7 +82,7 @@ def get_docs(version: tuple[int, int]) -> HTMLResponse:
     )
 
 
-def get_main_docs(_: list[tuple[int, int]]) -> HTMLResponse:
+def get_main_docs(_: List[tuple[int, int]]) -> HTMLResponse:
     """
     This will expose a single, auto-generated "/versions" endpoint via a Swagger page.
     """

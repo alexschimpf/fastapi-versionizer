@@ -212,7 +212,7 @@ def _build_versioned_app(
         versioned_app.router.routes.append(route)
 
     if get_openapi:
-        def openapi() -> dict[str, Any]:
+        def openapi() -> Dict[str, Any]:
             return get_openapi(versioned_app, version)
         versioned_app.openapi = openapi
 
