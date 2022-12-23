@@ -1,18 +1,23 @@
 from fastapi.testclient import TestClient
 
 from unittest import TestCase
-from examples.advanced import app
+from examples.advanced import app, versions
 
 
-class TestSimple(TestCase):
+class TestAdvanced(TestCase):
 
-    def test_simple(self) -> None:
+    def setUp(self) -> None:
+        self.maxDiff = None
+
+    def test_advanced(self) -> None:
         test_client = TestClient(app)
 
+        self.assertListEqual([(1, 0), (2, 0)], versions)
         self.assertEqual(404, test_client.get('/').status_code)
         self.assertEqual(404, test_client.get('/specs').status_code)
         self.assertEqual(200, test_client.get('/openapi.json').status_code)
-        self.assertEqual(200, test_client.get('/api_home').status_code)
+        self.assertEqual(200, test_client.get('/versions').status_code)
+        self.assertEqual(200, test_client.get('/api-versions').status_code)
         self.assertEqual(200, test_client.get('/v1/specs').status_code)
         self.assertEqual(404, test_client.get('/v1/redoc').status_code)
         self.assertEqual(200, test_client.get('/v1/openapi.json').status_code)
@@ -32,6 +37,10 @@ class TestSimple(TestCase):
         self.assertEqual(200, test_client.post('/latest/do_something_else').status_code)
         self.assertEqual(200, test_client.post('/latest/do_something_new').status_code)
 
+        self.assertDictEqual(
+            {'versions': [{'version': '1'}, {'version': '2'}]},
+            test_client.get('/versions').json()
+        )
         self.assertDictEqual(
             {'something': 'something'},
             test_client.post('/v1/do_something', json={'something': 'something'}).json()
@@ -107,7 +116,7 @@ class TestSimple(TestCase):
             test_client.get('/openapi.json').json()['paths']
         )
         self.assertDictEqual(
-            {'title': 'My Versioned API', 'version': '1.0'},
+            {'title': 'My Versioned API', 'version': '1'},
             test_client.get('/v1/openapi.json').json()['info']
         )
         self.assertDictEqual(
@@ -206,7 +215,7 @@ class TestSimple(TestCase):
             test_client.get('/v1/openapi.json').json()['paths']
         )
         self.assertDictEqual(
-            {'title': 'My Versioned API', 'version': '2.0'},
+            {'title': 'My Versioned API', 'version': '2'},
             test_client.get('/v2/openapi.json').json()['info']
         )
         self.assertDictEqual(
@@ -216,8 +225,8 @@ class TestSimple(TestCase):
                         'tags': [
                             'Something'
                         ],
-                        'summary': 'Do Something',
-                        'operationId': 'do_something_do_something_post',
+                        'summary': 'Do Something V2',
+                        'operationId': 'do_something_v2_do_something_post',
                         'responses': {
                             '200': {
                                 'description': 'Successful Response',

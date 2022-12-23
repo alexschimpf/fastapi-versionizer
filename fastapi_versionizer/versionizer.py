@@ -42,11 +42,10 @@ def versionize(
     enable_latest: bool = False,
     latest_prefix: str = '/latest',
     get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
-    get_main_docs: Union[Callable[[List[Tuple[int, int]]], HTMLResponse], None] = None,
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     **kwargs: Any
-) -> None:
+) -> List[Tuple[int, int]]:
     """
     Mounts a sub-application to the given FastAPI app for each API version.
     The API versions are defined by your use of the @api_version decorator.
@@ -69,13 +68,6 @@ def versionize(
         - and returns an OpenAPI schema dict.
         - This will be used to override the `openapi` function of each versioned FastAPI sub-application.
         - This is useful if you want to customize your OpenAPI schemas at runtime
-    :param get_main_docs:
-        - A function that takes in a list of all versions (in tuple form) and returns an HTML response
-        - This is used to generate a single, custom "main docs" page
-        - You could make this a typical Swagger page that will expose a single "/versions" route or
-        - you could generate your own custom HTML page
-        - This page's URL path will be derived from kwargs['main_docs_url'] or kwargs['docs_url']
-        - If this param is not given, a "main docs" page will not be generated
     :param get_docs:
         - A function that takes in a version (in tuple form) and returns an HTML response
         - This is used to generate the Swagger docs for each version
@@ -90,6 +82,7 @@ def versionize(
         - These are additional arguments that will be applied to each mounted, versioned app
         - For example, if you want to use `swagger_ui_parameters` for all version docs pages, you would
         - set this in kwargs.
+    :return list of versions (in tuple form)
     """
 
     if latest_prefix == '/':
@@ -141,22 +134,18 @@ def versionize(
 
     app.router.routes = [
         route for route in app.routes
-        if isinstance(route, Mount) or (get_main_docs and isinstance(route, Route) and route.path == app.openapi_url)
+        if isinstance(route, Mount) or (isinstance(route, Route) and route.path == app.openapi_url)
     ]
 
     @app.get('/versions', response_model=VersionsModel, tags=['Versions'])
     async def get_versions_() -> VersionsModel:
         return VersionsModel(versions=[
-            VersionModel(version=version_format.format(major=major, minor=minor))
-            for (major, minor) in versions
+            VersionModel(
+                version=version_format.format(major=major, minor=minor)
+            ) for (major, minor) in versions
         ])
 
-    if get_main_docs and (kwargs.get('main_docs_url') or kwargs.get('docs_url')):
-        docs_url = cast(str, kwargs.get('main_docs_url') or kwargs.get('docs_url'))
-
-        @app.get(docs_url, response_class=HTMLResponse, include_in_schema=False)
-        def get_docs_() -> HTMLResponse:
-            return get_main_docs(versions)  # type: ignore
+    return versions
 
 
 def _get_version_route_mapping(

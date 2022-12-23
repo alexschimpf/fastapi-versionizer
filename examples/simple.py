@@ -39,11 +39,14 @@ async def do_something_new() -> Any:
 
 
 '''
-- Create "/v1/docs" and "/v2/docs" pages, because `docs_url` is given
-- Create "/v1/redoc" and "/v2/redoc" pages because `redoc_url` is given
-- Note: A main docs page is not generated because `get_main_docs` is not given
+- Notes:
+    - "/v1/docs" and "/v2/docs" pages are generated, because `docs_url` is given
+    - "/v1/redoc" and "/v2/redoc" pages are generated because `redoc_url` is given
+    - "/versions" is automatically generated
 
 - This will create the following endpoints:
+    - /openapi.json
+    - /versions
     - /v1/docs
     - /v1/redoc
     - /v1/openapi.json
@@ -56,7 +59,7 @@ async def do_something_new() -> Any:
     - /v2/do_something_else
     - /v2/do_something_new
 '''
-versionize(
+versions = versionize(
     app=app,
     prefix_format='/v{major}',
     docs_url='/docs',
