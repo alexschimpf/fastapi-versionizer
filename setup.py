@@ -5,13 +5,14 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='fastapi_versionizer',
-    version='0.1.1',
+    version='0.1.2',
     author='Alex Schimpf',
     author_email='aschimpf1@gmail.com',
     description='API versionizer for FastAPI web applications',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/alexschimpf/fastapi-versionizer',
+    package_data={'fastapi_versionizer': ['py.typed']},
     packages=['fastapi_versionizer'],
     classifiers=[
         'Programming Language :: Python :: 3.6',
