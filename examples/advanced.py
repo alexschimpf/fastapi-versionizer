@@ -27,7 +27,7 @@ class ErrorResponsesModel(BaseModel):
 app = FastAPI(
     title='My Versioned API',
     description='Look, I can version my APIs!',
-    version="2.0",
+    version='2.0',
     responses={
         400: {'model': ErrorResponsesModel},
         500: {'model': ErrorResponsesModel}
