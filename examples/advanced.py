@@ -27,6 +27,7 @@ class ErrorResponsesModel(BaseModel):
 app = FastAPI(
     title='My Versioned API',
     description='Look, I can version my APIs!',
+    version="2.0",
     responses={
         400: {'model': ErrorResponsesModel},
         500: {'model': ErrorResponsesModel}
@@ -124,7 +125,7 @@ versionize(
     get_openapi=get_openapi,
     get_main_docs=get_main_docs,
     get_docs=get_docs,
-    docs_url='/docs',
+    docs_url='/specs',
     enable_latest=True,
     latest_prefix='/latest',
     swagger_ui_parameters={'defaultModelsExpandDepth': -1}

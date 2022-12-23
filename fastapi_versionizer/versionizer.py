@@ -121,7 +121,7 @@ def versionize(
             get_redoc=get_redoc,
             **kwargs
         )
-        app.mount(path=prefix, app=versioned_app)
+        app.mount(path=prefix, app=versioned_app, name=prefix[1:])
 
     if enable_latest:
         version = versions[-1]
@@ -137,11 +137,11 @@ def versionize(
             get_redoc=get_redoc,
             **kwargs
         )
-        app.mount(path=latest_prefix, app=versioned_app)
+        app.mount(path=latest_prefix, app=versioned_app, name=latest_prefix[1:])
 
     app.router.routes = [
         route for route in app.routes
-        if isinstance(route, Mount) or (isinstance(route, Route) and route.path == app.openapi_url)
+        if isinstance(route, Mount) or (get_main_docs and isinstance(route, Route) and route.path == app.openapi_url)
     ]
 
     @app.get('/versions', response_model=VersionsModel, tags=['Versions'])
@@ -178,7 +178,7 @@ def _version_to_route(
     route: BaseRoute,
     default_version: Tuple[int, int],
 ) -> Tuple[Tuple[int, int], BaseRoute]:
-    api_route = cast(APIRoute, route)
+    api_route = cast(Route, route)
     version = getattr(api_route.endpoint, '_api_version', default_version)
     return version, api_route
 
@@ -205,7 +205,7 @@ def _build_versioned_app(
     )
     versioned_app.dependency_overrides = app.dependency_overrides
     for route in unique_routes.values():
-        if isinstance(route, APIRoute) and \
+        if isinstance(route, Route) and \
                 ((get_docs and route.path == app.docs_url) or (get_redoc and route.path == app.redoc_url)):
             # Doc pages will be added later
             continue
