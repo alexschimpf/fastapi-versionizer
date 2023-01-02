@@ -87,23 +87,23 @@ def get_docs(version: Tuple[int, int]) -> HTMLResponse:
 
 '''
 - Notes:
-    - "/v1/docs" and "/v2/docs" pages are generated, because `docs_url` is given
+    - "/v1/specs" and "/v2/specs" pages are generated, because `docs_url` is given as "specs"
     - Redoc pages are not generated because `redoc_url` is not given
     - "/versions" is automatically generated
 
 - This will create the following endpoints:
     - /openapi.json
     - /versions
-    - /v1/docs
+    - /v1/specs
     - /v1/openapi.json
     - /v1/do_something
     - /v1/do_something_else
-    - /v2/docs
+    - /v2/specs
     - /v2/openapi.json    
     - /v2/do_something
     - /v2/do_something_else
     - /v2/do_something_new
-    - /latest/docs
+    - /latest/specs
     - /latest/openapi.json
     - /latest/do_something
     - /latest/do_something_else
