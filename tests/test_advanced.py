@@ -127,6 +127,7 @@ class TestAdvanced(TestCase):
                             'Something'
                         ],
                         'summary': 'Do Something',
+                        'description': 'default version -> /do_something',
                         'operationId': 'do_something_do_something_post',
                         'requestBody': {
                             'content': {
@@ -178,13 +179,14 @@ class TestAdvanced(TestCase):
                             'Something Else'
                         ],
                         'summary': 'Do Something Else',
+                        'description': 'default version -> /do_something_else',
                         'operationId': 'do_something_else_do_something_else_post',
                         'responses': {
                             '200': {
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {'title': 'Response Do Something Else Do Something Else Post'}
                                     }
                                 }
                             },
@@ -226,13 +228,14 @@ class TestAdvanced(TestCase):
                             'Something'
                         ],
                         'summary': 'Do Something V2',
+                        'description': 'version 2 -> /do_something',
                         'operationId': 'do_something_v2_do_something_post',
                         'responses': {
                             '200': {
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {'title': 'Response Do Something V2 Do Something Post'}
                                     }
                                 }
                             },
@@ -265,13 +268,14 @@ class TestAdvanced(TestCase):
                             'Something Else'
                         ],
                         'summary': 'Do Something Else',
+                        'description': 'default version -> /do_something_else',
                         'operationId': 'do_something_else_do_something_else_post',
                         'responses': {
                             '200': {
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {'title': 'Response Do Something Else Do Something Else Post'}
                                     }
                                 }
                             },
@@ -304,13 +308,14 @@ class TestAdvanced(TestCase):
                             'Something New'
                         ],
                         'summary': 'Do Something New',
+                        'description': 'version 2 -> /do_something_new',
                         'operationId': 'do_something_new_do_something_new_post',
                         'responses': {
                             '200': {
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {'title': 'Response Do Something New Do Something New Post'}
                                     }
                                 }
                             },

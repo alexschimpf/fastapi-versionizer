@@ -37,23 +37,35 @@ app = FastAPI(
 
 @app.post('/do_something', tags=['Something'], response_model=TestModel)
 async def do_something(test: TestModel) -> Any:
+    """
+    default version -> /do_something
+    """
     return test
 
 
 @app.post('/do_something_else', tags=['Something Else'])
 async def do_something_else() -> Any:
+    """
+    default version -> /do_something_else
+    """
     return {'message': 'something else'}
 
 
 @api_version(2)
 @app.post('/do_something', tags=['Something'])
 async def do_something_v2() -> Any:
+    """
+    version 2 -> /do_something
+    """
     return {'message': 'something'}
 
 
 @api_version(2)
 @app.post('/do_something_new', tags=['Something New'])
 async def do_something_new() -> Any:
+    """
+    version 2 -> /do_something_new
+    """
     return {'message': 'something new'}
 
 
@@ -118,7 +130,8 @@ versions = versionize(
     docs_url='/specs',
     enable_latest=True,
     latest_prefix='/latest',
-    swagger_ui_parameters={'defaultModelsExpandDepth': -1}
+    swagger_ui_parameters={'defaultModelsExpandDepth': -1},
+    sorted_routes=False
 )
 
 

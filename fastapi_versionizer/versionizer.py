@@ -41,6 +41,7 @@ def versionize(
     default_version: Tuple[int, int] = (1, 0),
     enable_latest: bool = False,
     latest_prefix: str = '/latest',
+    sorted_routes: bool = False,
     get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
@@ -63,6 +64,8 @@ def versionize(
     :param latest_prefix:
         - Defines the prefix use for the "latest" endpoints (if `enabled_latest` is True)
         - This cannot be "/"
+    :param sorted_routes:
+        - Sort the routes within a version to occur by route-path-name
     :param get_openapi:
         - A function that takes in a versioned FastAPI sub-application and a version (in tuple forms)
         - and returns an OpenAPI schema dict.
@@ -108,7 +111,7 @@ def versionize(
             app=app,
             version=version,
             semver=semver,
-            unique_routes=unique_routes,
+            unique_routes=dict(sorted(unique_routes.items())) if sorted_routes else unique_routes,
             get_openapi=get_openapi,
             get_docs=get_docs,
             get_redoc=get_redoc,
@@ -124,7 +127,7 @@ def versionize(
             app=app,
             version=version,
             semver=semver,
-            unique_routes=unique_routes,
+            unique_routes=dict(sorted(unique_routes.items())) if sorted_routes else unique_routes,
             get_openapi=get_openapi,
             get_docs=get_docs,
             get_redoc=get_redoc,
