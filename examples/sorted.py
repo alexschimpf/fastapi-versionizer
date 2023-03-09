@@ -61,5 +61,7 @@ versions = versionize(
     app=app,
     prefix_format='/v{major}.{minor}',
     docs_url='/docs',
+    enable_latest=True,
+    latest_prefix='/latest',
     sorted_routes=True
 )

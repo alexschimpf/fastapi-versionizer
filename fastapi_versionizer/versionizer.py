@@ -127,7 +127,7 @@ def versionize(
             app=app,
             version=version,
             semver=semver,
-            unique_routes=unique_routes,
+            unique_routes=dict(sorted(unique_routes.items())) if sorted_routes else unique_routes,
             get_openapi=get_openapi,
             get_docs=get_docs,
             get_redoc=get_redoc,

@@ -45,6 +45,11 @@ class TestSorted(TestCase):
 
         self.assertListEqual(
             ['/aaa_do_something_new', '/bbb_do_something_else', '/xxx_do_something'],
+            list(test_client.get('/latest/openapi.json').json()['paths'].keys())
+        )
+
+        self.assertListEqual(
+            ['/aaa_do_something_new', '/bbb_do_something_else', '/xxx_do_something'],
             list(test_client.get('/v2.1/openapi.json').json()['paths'].keys())
         )
 
