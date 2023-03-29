@@ -8,6 +8,7 @@ from starlette.routing import BaseRoute, Route, WebSocketRoute
 from pydantic import BaseModel
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
+FastAPIT = TypeVar('FastAPIT', bound=FastAPI)
 
 
 class VersionModel(BaseModel):
@@ -176,7 +177,7 @@ def _version_to_route(
 
 
 def _build_versioned_app(
-    app: FastAPI,
+    app: FastAPIT,
     version: Tuple[int, int],
     semver: str,
     unique_routes: Dict[str, BaseRoute],
@@ -184,10 +185,10 @@ def _build_versioned_app(
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     **kwargs: Any
-) -> FastAPI:
+) -> FastAPIT:
     docs_url = kwargs.pop('docs_url', None)
     redoc_url = kwargs.pop('redoc_url', None)
-    versioned_app = FastAPI(
+    versioned_app = app.__class__(
         title=app.title,
         description=app.description,
         version=semver,
