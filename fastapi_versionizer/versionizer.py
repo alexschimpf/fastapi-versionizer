@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union
+from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union, Optional
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
@@ -30,6 +30,22 @@ def api_version(
 
     def decorator(func: CallableT) -> CallableT:
         func._api_version = (major, minor)  # type: ignore
+        return func
+
+    return decorator
+
+
+def api_version_remove(
+    major: int,
+    minor: int = 0
+) -> Callable[[CallableT], CallableT]:
+    """
+    Annotates a route as being removed from the given version onward (until a
+    new version of the route is assigned again)
+    """
+
+    def decorator(func: CallableT) -> CallableT:
+        func._api_version_remove = (major, minor)  # type: ignore
         return func
 
     return decorator
@@ -93,20 +109,22 @@ def versionize(
         raise ValueError('latest_prefix cannot be "/"')
 
     version_route_mapping = _get_version_route_mapping(app=app, default_version=default_version)
+    version_remove_route_mapping = _get_version_remove_route_mapping(app=app)
 
     unique_routes: Dict[str, BaseRoute] = {}
-    versions = sorted(version_route_mapping.keys())
+    versions = sorted(set(version_route_mapping.keys()) | set(version_remove_route_mapping.keys()))
     for version in versions:
         major, minor = version
         prefix = prefix_format.format(major=major, minor=minor)
         semver = version_format.format(major=major, minor=minor)
 
         for route in version_route_mapping[version]:
-            if isinstance(route, APIRoute):
-                for method in route.methods:
-                    unique_routes[route.path + '|' + method] = route
-            elif isinstance(route, WebSocketRoute):
-                unique_routes[route.path] = route
+            for unique_key in _get_unique_route_keys(route):
+                unique_routes[unique_key] = route
+
+        for route in version_remove_route_mapping[version]:
+            for unique_key in _get_unique_route_keys(route):
+                unique_routes.pop(unique_key, None)
 
         versioned_app = _build_versioned_app(
             app=app,
@@ -152,6 +170,16 @@ def versionize(
     return versions
 
 
+def _get_unique_route_keys(route: BaseRoute) -> list[str]:
+    result = []
+    if isinstance(route, APIRoute):
+        for method in route.methods:
+            result.append(route.path + '|' + method)
+    elif isinstance(route, WebSocketRoute):
+        result.append(route.path)
+    return result
+
+
 def _get_version_route_mapping(
     app: FastAPI,
     default_version: Tuple[int, int]
@@ -173,6 +201,27 @@ def _version_to_route(
 ) -> Tuple[Tuple[int, int], BaseRoute]:
     api_route = cast(Route, route)
     version = getattr(api_route.endpoint, '_api_version', default_version)
+    return version, api_route
+
+
+def _get_version_remove_route_mapping(
+    app: FastAPI,
+) -> Dict[Tuple[int, int], List[BaseRoute]]:
+    version_remove_route_mapping: Dict[Tuple[int, int], List[BaseRoute]] = defaultdict(list)
+    version_remove_routes = [_version_remove_to_route(route=route) for route in app.routes]
+
+    for version, route in version_remove_routes:
+        if version is not None:
+            version_remove_route_mapping[version].append(route)
+
+    return version_remove_route_mapping
+
+
+def _version_remove_to_route(
+    route: BaseRoute,
+) -> Tuple[Optional[Tuple[int, int]], BaseRoute]:
+    api_route = cast(Route, route)
+    version = getattr(api_route.endpoint, '_api_version_remove', None)
     return version, api_route
 
 
