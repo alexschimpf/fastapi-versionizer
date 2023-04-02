@@ -186,7 +186,7 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {'title': 'Response Do Something Else Do Something Else Post'}
+                                        'schema': {}
                                     }
                                 }
                             },
@@ -235,7 +235,7 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {'title': 'Response Do Something V2 Do Something Post'}
+                                        'schema': {}
                                     }
                                 }
                             },
@@ -275,7 +275,7 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {'title': 'Response Do Something Else Do Something Else Post'}
+                                        'schema': {}
                                     }
                                 }
                             },
@@ -315,7 +315,7 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {'title': 'Response Do Something New Do Something New Post'}
+                                        'schema': {}
                                     }
                                 }
                             },
