@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union, Optional
+from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
@@ -170,7 +170,7 @@ def versionize(
     return versions
 
 
-def _get_unique_route_keys(route: BaseRoute) -> list[str]:
+def _get_unique_route_keys(route: BaseRoute) -> List[str]:
     result = []
     if isinstance(route, APIRoute):
         for method in route.methods:
@@ -219,7 +219,7 @@ def _get_version_remove_route_mapping(
 
 def _version_remove_to_route(
     route: BaseRoute,
-) -> Tuple[Optional[Tuple[int, int]], BaseRoute]:
+) -> Tuple[Union[Tuple[int, int], None], BaseRoute]:
     api_route = cast(Route, route)
     version = getattr(api_route.endpoint, '_api_version_remove', None)
     return version, api_route
