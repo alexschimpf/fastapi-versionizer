@@ -124,7 +124,10 @@ def versionize(
 
         for route in version_remove_route_mapping[version]:
             for unique_key in _get_unique_route_keys(route):
-                unique_routes.pop(unique_key, None)
+                if unique_key in unique_routes:
+                    del unique_routes[unique_key]
+                else:
+                    raise ValueError(f'Route {unique_key!r} can\'t be removed in version {version}')
 
         versioned_app = _build_versioned_app(
             app=app,
