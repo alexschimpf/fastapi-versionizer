@@ -8,6 +8,7 @@ from starlette.routing import BaseRoute, Route, WebSocketRoute
 from pydantic import BaseModel
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
+FastAPIT = TypeVar('FastAPIT', bound=FastAPI)
 
 
 class VersionModel(BaseModel):
@@ -29,6 +30,22 @@ def api_version(
 
     def decorator(func: CallableT) -> CallableT:
         func._api_version = (major, minor)  # type: ignore
+        return func
+
+    return decorator
+
+
+def api_version_remove(
+    major: int,
+    minor: int = 0
+) -> Callable[[CallableT], CallableT]:
+    """
+    Annotates a route as being removed from the given version onward (until a
+    new version of the route is assigned again)
+    """
+
+    def decorator(func: CallableT) -> CallableT:
+        func._api_version_remove = (major, minor)  # type: ignore
         return func
 
     return decorator
@@ -92,20 +109,25 @@ def versionize(
         raise ValueError('latest_prefix cannot be "/"')
 
     version_route_mapping = _get_version_route_mapping(app=app, default_version=default_version)
+    version_remove_route_mapping = _get_version_remove_route_mapping(app=app)
 
     unique_routes: Dict[str, BaseRoute] = {}
-    versions = sorted(version_route_mapping.keys())
+    versions = sorted(set(version_route_mapping.keys()) | set(version_remove_route_mapping.keys()))
     for version in versions:
         major, minor = version
         prefix = prefix_format.format(major=major, minor=minor)
         semver = version_format.format(major=major, minor=minor)
 
         for route in version_route_mapping[version]:
-            if isinstance(route, APIRoute):
-                for method in route.methods:
-                    unique_routes[route.path + '|' + method] = route
-            elif isinstance(route, WebSocketRoute):
-                unique_routes[route.path] = route
+            for unique_key in _get_unique_route_keys(route):
+                unique_routes[unique_key] = route
+
+        for route in version_remove_route_mapping[version]:
+            for unique_key in _get_unique_route_keys(route):
+                if unique_key in unique_routes:
+                    del unique_routes[unique_key]
+                else:
+                    raise ValueError(f'Route {unique_key!r} can\'t be removed in version {version}')
 
         versioned_app = _build_versioned_app(
             app=app,
@@ -151,6 +173,16 @@ def versionize(
     return versions
 
 
+def _get_unique_route_keys(route: BaseRoute) -> List[str]:
+    result = []
+    if isinstance(route, APIRoute):
+        for method in route.methods:
+            result.append(route.path + '|' + method)
+    elif isinstance(route, WebSocketRoute):
+        result.append(route.path)
+    return result
+
+
 def _get_version_route_mapping(
     app: FastAPI,
     default_version: Tuple[int, int]
@@ -175,8 +207,29 @@ def _version_to_route(
     return version, api_route
 
 
-def _build_versioned_app(
+def _get_version_remove_route_mapping(
     app: FastAPI,
+) -> Dict[Tuple[int, int], List[BaseRoute]]:
+    version_remove_route_mapping: Dict[Tuple[int, int], List[BaseRoute]] = defaultdict(list)
+    version_remove_routes = [_version_remove_to_route(route=route) for route in app.routes]
+
+    for version, route in version_remove_routes:
+        if version is not None:
+            version_remove_route_mapping[version].append(route)
+
+    return version_remove_route_mapping
+
+
+def _version_remove_to_route(
+    route: BaseRoute,
+) -> Tuple[Union[Tuple[int, int], None], BaseRoute]:
+    api_route = cast(Route, route)
+    version = getattr(api_route.endpoint, '_api_version_remove', None)
+    return version, api_route
+
+
+def _build_versioned_app(
+    app: FastAPIT,
     version: Tuple[int, int],
     semver: str,
     unique_routes: Dict[str, BaseRoute],
@@ -184,10 +237,10 @@ def _build_versioned_app(
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     **kwargs: Any
-) -> FastAPI:
+) -> FastAPIT:
     docs_url = kwargs.pop('docs_url', None)
     redoc_url = kwargs.pop('redoc_url', None)
-    versioned_app = FastAPI(
+    versioned_app = app.__class__(
         title=app.title,
         description=app.description,
         version=semver,

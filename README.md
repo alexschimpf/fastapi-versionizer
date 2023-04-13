@@ -13,6 +13,8 @@ You can find examples in the [examples](https://github.com/alexschimpf/fastapi-v
 ## Details
 - Routes can be annotated using the `@api_version` decorator
   - This essentially says, "This route is available from version (major, minor) onward, until a new version of the route is defined."
+- Routes can be annotated using the `@api_version_remove` decorator
+  - This essentially says, "This route is removed from version (major, minor) onward, until a new version of the route is defined again."
 - Use the `versionize` function on your FastAPI app to perform the versionizing magic
   - Each version results in a new mounted FastAPI sub-application with a version prefix you define
   - Unlike `fastapi_versioning`, this does not return a new FastAPI app, but applies the versioning directly to the app you provide
