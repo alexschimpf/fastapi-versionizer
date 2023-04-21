@@ -15,6 +15,7 @@ You can find examples in the [examples](https://github.com/alexschimpf/fastapi-v
   - This essentially says, "This route is available from version (major, minor) onward, until a new version of the route is defined."
 - Routes can be annotated using the `@api_version_remove` decorator
   - This essentially says, "This route is removed from version (major, minor) onward, until a new version of the route is defined again."
+- Major and minor versions can be any hashable object. See below regarding how to handle sorting of versions.
 - Use the `versionize` function on your FastAPI app to perform the versionizing magic
   - Each version results in a new mounted FastAPI sub-application with a version prefix you define
   - Unlike `fastapi_versioning`, this does not return a new FastAPI app, but applies the versioning directly to the app you provide
@@ -28,7 +29,10 @@ You can find examples in the [examples](https://github.com/alexschimpf/fastapi-v
     - This is useful if you need to want to customize your Redoc HTML using `fastapi.openapi.docs.get_redoc_html`
     - The usage of this is very similar to `get_docs`
   - You can sort the routes within a version to occur by route-path-name using `sorted_routes` see 
-    the Sorted Example for more details.
+    the Sorted Example for more details
+  - You can tell `versionize` how to sort your versions from first to last using the `version_sort_key` parameter
+    - This is a function that will be used as the `key` for `sorted`
+    - See the [Non-integer Versions Example](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/non_integer_versions.py) for more details
   - You can pass additional `kwargs` that will be supplied to each versioned sub-application
     - Note: `app.title` and `app.description` are automatically supplied to each versioned sub-application
     - For all other FastAPI parameters, these must be passed via `kwargs`
