@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union
+from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union, Type
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
@@ -49,6 +49,41 @@ def api_version_remove(
         return func
 
     return decorator
+
+
+def versioned_api_route(
+    major: Union[int, None] = None,
+    minor: int = 0,
+    major_remove: Union[int, None] = None,
+    minor_remove: int = 0,
+    route_class: Type[APIRoute] = APIRoute
+) -> Type[APIRoute]:
+    """
+    The result of this can be used as the `route_class` for an APIRouter object
+    Example:
+        APIRouter(
+            prefix="/something",
+            tags=["Something"],
+            route_class=versioned_api_route(major=1, minor=1)
+        )
+    """
+
+    class VersionedAPIRoute(route_class):  # type: ignore
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            try:
+                if major is not None:
+                    self.endpoint._api_version = (major, minor)
+                if major_remove is not None:
+                    self.endpoint._api_version_remove = (major_remove, minor_remove)
+            except AttributeError:
+                # Support bound methods
+                if major is not None:
+                    self.endpoint.__func__._api_version = (major, minor)
+                if major_remove is not None:
+                    self.endpoint.__func__._api_version_remove = (major_remove, minor_remove)
+
+    return VersionedAPIRoute
 
 
 def versionize(
