@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='fastapi_versionizer',
-    version='0.1.6',
+    version='0.2.0',
     author='Alex Schimpf',
     author_email='aschimpf1@gmail.com',
     description='API versionizer for FastAPI web applications',

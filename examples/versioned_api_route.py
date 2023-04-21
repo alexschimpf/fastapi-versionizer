@@ -1,7 +1,5 @@
 from typing import Any
-
 from fastapi import FastAPI, APIRouter
-
 from fastapi_versionizer.versionizer import versioned_api_route, versionize
 
 app = FastAPI(

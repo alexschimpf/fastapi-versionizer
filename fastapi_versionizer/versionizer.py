@@ -20,8 +20,8 @@ class VersionsModel(BaseModel):
 
 
 def api_version(
-    major: int,
-    minor: int = 0
+    major: Any,
+    minor: Any = 0
 ) -> Callable[[CallableT], CallableT]:
     """
     Annotates a route as being available from the given version onward (until a
@@ -36,8 +36,8 @@ def api_version(
 
 
 def api_version_remove(
-    major: int,
-    minor: int = 0
+    major: Any,
+    minor: Any = 0
 ) -> Callable[[CallableT], CallableT]:
     """
     Annotates a route as being removed from the given version onward (until a
@@ -52,10 +52,10 @@ def api_version_remove(
 
 
 def versioned_api_route(
-    major: Union[int, None] = None,
-    minor: int = 0,
-    major_remove: Union[int, None] = None,
-    minor_remove: int = 0,
+    major: Union[Any, None] = None,
+    minor: Any = 0,
+    major_remove: Union[Any, None] = None,
+    minor_remove: Any = 0,
     route_class: Type[APIRoute] = APIRoute
 ) -> Type[APIRoute]:
     """
@@ -90,15 +90,16 @@ def versionize(
     app: FastAPI,
     version_format: str = '{major}.{minor}',
     prefix_format: str = '/v{major}_{minor}',
-    default_version: Tuple[int, int] = (1, 0),
+    default_version: Tuple[Any, Any] = (1, 0),
     enable_latest: bool = False,
     latest_prefix: str = '/latest',
     sorted_routes: bool = False,
-    get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
-    get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
-    get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
+    get_openapi: Union[Callable[[FastAPI, Tuple[Any, Any]], Dict[str, Any]], None] = None,
+    get_docs: Union[Callable[[Tuple[Any, Any]], HTMLResponse], None] = None,
+    get_redoc: Union[Callable[[Tuple[Any, Any]], HTMLResponse], None] = None,
+    version_sort_key: Union[Callable[[Any], Any], None] = None,
     **kwargs: Any
-) -> List[Tuple[int, int]]:
+) -> List[Tuple[Any, Any]]:
     """
     Mounts a sub-application to the given FastAPI app for each API version.
     The API versions are defined by your use of the @api_version decorator.
@@ -133,6 +134,9 @@ def versionize(
         - This is used to generate the Redoc docs for each version
         - You will likely want to use `fastapi.openapi.docs.get_redoc_html` for this
         - This page's URL path will be derived from kwargs['redoc_url']
+    :param version_sort_key:
+        - A function that is used as the key when sorting versions from first to last
+        - This is passed as the `key` argument to `sorted`
     :param kwargs:
         - These are additional arguments that will be applied to each mounted, versioned app
         - For example, if you want to use `swagger_ui_parameters` for all version docs pages, you would
@@ -147,7 +151,10 @@ def versionize(
     version_remove_route_mapping = _get_version_remove_route_mapping(app=app)
 
     unique_routes: Dict[str, BaseRoute] = {}
-    versions = sorted(set(version_route_mapping.keys()) | set(version_remove_route_mapping.keys()))
+    versions = sorted(
+        set(version_route_mapping.keys()) | set(version_remove_route_mapping.keys()),
+        key=version_sort_key
+    )
     for version in versions:
         major, minor = version
         prefix = prefix_format.format(major=major, minor=minor)
