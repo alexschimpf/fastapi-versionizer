@@ -238,8 +238,11 @@ def _version_to_route(
     default_version: Tuple[int, int],
 ) -> Tuple[Tuple[int, int], BaseRoute]:
     api_route = cast(Route, route)
-    version = getattr(api_route.endpoint, '_api_version', default_version)
-    return version, api_route
+    if hasattr(api_route, 'endpoint'):
+        version = getattr(api_route.endpoint, '_api_version', default_version)
+        return version, api_route
+    else:
+        return (1, 0), api_route #AttributeError: 'Mount' object has no attribute 'endpoint'
 
 
 def _get_version_remove_route_mapping(
@@ -259,8 +262,11 @@ def _version_remove_to_route(
     route: BaseRoute,
 ) -> Tuple[Union[Tuple[int, int], None], BaseRoute]:
     api_route = cast(Route, route)
-    version = getattr(api_route.endpoint, '_api_version_remove', None)
-    return version, api_route
+    if hasattr(api_route, 'endpoint'):
+        version = getattr(api_route.endpoint, '_api_version_remove', None)
+        return version, api_route
+    else:
+        return (1, 0), api_route #AttributeError: 'Mount' object has no attribute 'endpoint'
 
 
 def _build_versioned_app(
