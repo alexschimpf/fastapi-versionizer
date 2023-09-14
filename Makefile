@@ -47,4 +47,4 @@ install-dev:
 
 # enable commit hook
 install-commit-hooks:
-	pre-commit install
+	pre-commit install --hook-type commit-msg
