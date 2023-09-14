@@ -41,7 +41,7 @@ app.include_router(router2)
     - /v1_0/docs
     - /v1_0/openapi.json
     - /v1_0/hey/dude
-    
+
     - /v1_1/docs
     - /v1_1/openapi.json
     - /v1_1/sup/dawg

@@ -111,7 +111,7 @@ def get_docs(version: Tuple[int, int]) -> HTMLResponse:
     - /v1/do_something
     - /v1/do_something_else
     - /v2/specs
-    - /v2/openapi.json    
+    - /v2/openapi.json
     - /v2/do_something
     - /v2/do_something_else
     - /v2/do_something_new
