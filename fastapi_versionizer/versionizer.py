@@ -162,7 +162,7 @@ def versionize(
                 if unique_key in unique_routes:
                     del unique_routes[unique_key]
                 else:
-                    raise ValueError(f'Route {unique_key!r} can\'t be removed in version {version}')
+                    raise ValueError(f"Route {unique_key!r} can't be removed in version {version}")
 
         versioned_app = _build_versioned_app(
             app=app,
@@ -293,17 +293,17 @@ def _build_versioned_app(
 
     if get_openapi:
         def openapi() -> Dict[str, Any]:
-            return get_openapi(versioned_app, version)  # type: ignore
+            return get_openapi(versioned_app, version)
         versioned_app.openapi = openapi  # type: ignore
 
     if get_docs and docs_url:
         @versioned_app.get(cast(str, docs_url), include_in_schema=False)
         def get_docs_() -> HTMLResponse:
-            return get_docs(version)  # type: ignore
+            return get_docs(version)
 
     if get_redoc and redoc_url:
         @versioned_app.get(cast(str, redoc_url), include_in_schema=False)
         def get_redoc_() -> HTMLResponse:
-            return get_redoc(version)  # type: ignore
+            return get_redoc(version)
 
     return versioned_app
