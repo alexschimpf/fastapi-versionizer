@@ -55,28 +55,28 @@ async def do_something_v4() -> Any:
 - This will create the following endpoints:
     - /openapi.json
     - /versions
-    
+
     - /v1/docs
     - /v1/redoc
     - /v1/openapi.json
     - /v1/do_something
     - /v1/do_something_else
-    
+
     - /v2/docs
     - /v2/redoc
-    - /v2/openapi.json    
+    - /v2/openapi.json
     - /v2/do_something
     - /v2/do_something_else
     - /v2/do_something_new
-    
+
     - /v3/docs
     - /v3/redoc
-    - /v3/openapi.json    
+    - /v3/openapi.json
     - /v3/do_something_else
-    
+
     - /v4/docs
     - /v4/redoc
-    - /v4/openapi.json    
+    - /v4/openapi.json
     - /v4/do_something
     - /v4/do_something_else
 '''

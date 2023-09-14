@@ -1,0 +1,36 @@
+repos:
+  - repo: https://github.com/PyCQA/flake8
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-builtins==2.0.1
+          - flake8-comprehensions==3.10.1
+          - flake8-eradicate==1.4.0
+          - flake8-print==5.0.0
+          - flake8-length==0.3.1
+          - flake8-quotes==3.3.1
+          - flake8-use-fstring==1.4
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: no-commit-to-branch
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.5.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+  - repo: local
+    hooks:
+      - id: type-check
+        name: type-check
+        entry: "make type-check"
+        language: python
+        types: [python]
+        require_serial: true
+        verbose: true

@@ -186,7 +186,9 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {
+                                            'title': 'Response Do Something Else Do Something Else Post'
+                                        }
                                     }
                                 }
                             },
@@ -235,7 +237,9 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {
+                                            'title': 'Response Do Something V2 Do Something Post'
+                                        }
                                     }
                                 }
                             },
@@ -275,7 +279,9 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {
+                                            'title': 'Response Do Something Else Do Something Else Post'
+                                        }
                                     }
                                 }
                             },
@@ -315,7 +321,9 @@ class TestAdvanced(TestCase):
                                 'description': 'Successful Response',
                                 'content': {
                                     'application/json': {
-                                        'schema': {}
+                                        'schema': {
+                                            'title': 'Response Do Something New Do Something New Post'
+                                        }
                                     }
                                 }
                             },
