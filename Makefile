@@ -45,6 +45,6 @@ lint:
 install-dev:
 	pip install -r requirements.dev.txt
 
-# enable commit hook
-install-commit-hooks:
+# install pre-commit hooks
+install-pre-commit-hooks:
 	pre-commit install --hook-type commit-msg
