@@ -51,4 +51,4 @@ install-pre-commit:
 
 # check dependency vulnerabilities
 check-vulnerabilities:
-	safety check
+	safety check --full-report --file requirements.txt
