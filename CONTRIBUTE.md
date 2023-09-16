@@ -9,6 +9,7 @@
   - Python type-checking
   - Unit tests
   - Commit message linting
+  - Dependency vulnerability scanning
 - All checks must pass before merging
 - All pull requests with code changes should contain tests or updates to existing tests
   - Exceptions are possible with a sufficient reason
