@@ -50,3 +50,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: make install-dev
       - run: make run-tests
+
+  safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aufdenpunkt/python-safety-check@master

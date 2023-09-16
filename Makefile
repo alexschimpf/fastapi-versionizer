@@ -48,3 +48,7 @@ install-dev:
 # install pre-commit
 install-pre-commit:
 	pre-commit install --hook-type commit-msg
+
+# check dependency vulnerabilities
+check-vulnerabilities:
+	safety check
