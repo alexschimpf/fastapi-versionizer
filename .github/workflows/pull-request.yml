@@ -55,4 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aufdenpunkt/python-safety-check@master
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: pip install safety==2.3.5
+      - run: make check-vulnerabilities
