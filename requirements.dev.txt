@@ -12,6 +12,7 @@ mypy==1.4.1
 pre-commit==2.21.0
 pytest==7.0.1
 pytest-cov==4.1.0
+safety==2.3.5
 twine==3.8.0
 types-setuptools==65.6.0.2
 httpx==0.22.0
