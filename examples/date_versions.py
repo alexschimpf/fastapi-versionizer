@@ -11,19 +11,19 @@ app = FastAPI(
 
 @api_version(datetime.date(2023, 1, 1))
 @app.get('/jan')
-async def jan() -> Any:
+async def january() -> Any:
     return 'jan'
 
 
 @api_version(datetime.date(2023, 2, 1))
 @app.get('/feb')
-async def feb() -> Any:
+async def february() -> Any:
     return 'feb'
 
 
 @api_version(datetime.date(2023, 10, 1))
 @app.get('/oct')
-async def oct() -> Any:
+async def october() -> Any:
     return 'oct'
 
 
