@@ -1,5 +1,4 @@
 from typing import List, Any, Dict, Tuple
-
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.openapi.docs import get_swagger_ui_html

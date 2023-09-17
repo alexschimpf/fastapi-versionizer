@@ -1,5 +1,4 @@
 from typing import Any
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 

@@ -6,7 +6,7 @@ from examples.versioned_api_route import app, versions
 
 class TestVersionedAPIRoute(TestCase):
 
-    def test_simple(self) -> None:
+    def test_versioned_api_route(self) -> None:
         test_client = TestClient(app)
 
         self.assertListEqual([(1, 0), (1, 1)], versions)

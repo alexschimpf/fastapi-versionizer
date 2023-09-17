@@ -1,6 +1,5 @@
 from collections import defaultdict
 from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union, Type
-
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.routing import APIRoute, Mount
@@ -20,8 +19,8 @@ class VersionsModel(BaseModel):
 
 
 def api_version(
-    major: int,
-    minor: int = 0
+    major: Any,
+    minor: Any = 0
 ) -> Callable[[CallableT], CallableT]:
     """
     Annotates a route as being available from the given version onward (until a
@@ -36,8 +35,8 @@ def api_version(
 
 
 def api_version_remove(
-    major: int,
-    minor: int = 0
+    major: Any,
+    minor: Any = 0
 ) -> Callable[[CallableT], CallableT]:
     """
     Annotates a route as being removed from the given version onward (until a
@@ -52,10 +51,10 @@ def api_version_remove(
 
 
 def versioned_api_route(
-    major: Union[int, None] = None,
-    minor: int = 0,
-    major_remove: Union[int, None] = None,
-    minor_remove: int = 0,
+    major: Union[Any, None] = None,
+    minor: Any = 0,
+    major_remove: Union[Any, None] = None,
+    minor_remove: Any = 0,
     route_class: Type[APIRoute] = APIRoute
 ) -> Type[APIRoute]:
     """
@@ -88,17 +87,18 @@ def versioned_api_route(
 
 def versionize(
     app: FastAPI,
-    version_format: str = '{major}.{minor}',
-    prefix_format: str = '/v{major}_{minor}',
-    default_version: Tuple[int, int] = (1, 0),
+    version_format: Union[str, Callable[[Any, Any], str]] = '{major}.{minor}',
+    prefix_format: Union[str, Callable[[Any, Any], str]] = '/v{major}_{minor}',
+    default_version: Tuple[Any, Any] = (1, 0),
     enable_latest: bool = False,
     latest_prefix: str = '/latest',
     sorted_routes: bool = False,
-    get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
-    get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
-    get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
+    get_openapi: Union[Callable[[FastAPI, Tuple[Any, Any]], Dict[str, Any]], None] = None,
+    get_docs: Union[Callable[[Tuple[Any, Any]], HTMLResponse], None] = None,
+    get_redoc: Union[Callable[[Tuple[Any, Any]], HTMLResponse], None] = None,
+    version_sort_key: Union[Callable[[Any], Any], None] = None,
     **kwargs: Any
-) -> List[Tuple[int, int]]:
+) -> List[Tuple[Any, Any]]:
     """
     Mounts a sub-application to the given FastAPI app for each API version.
     The API versions are defined by your use of the @api_version decorator.
@@ -107,8 +107,14 @@ def versionize(
     :param version_format:
         - Defines the format for your API versions
         - This is used to display the version in your docs pages
+        - This can be a string containing "{major}" and/or "{minor}", where major and minor are substituted in
+            - This is the most common case
+        - This can also be a function which takes in 2 parameters - major and minor version - and returns a str
     :param prefix_format:
         - Defines the format used to prefix your versioned route paths
+        - This can be a string containing "{major}" and/or "{minor}", where major and minor are substituted in
+            - This is the most common case
+        - This can also be a function which takes in 2 parameters - major and minor version - and returns a str
     :param default_version:
         - This will be applied to all routes without the @api_version decorator
     :param enable_latest:
@@ -133,6 +139,9 @@ def versionize(
         - This is used to generate the Redoc docs for each version
         - You will likely want to use `fastapi.openapi.docs.get_redoc_html` for this
         - This page's URL path will be derived from kwargs['redoc_url']
+    :param version_sort_key:
+        - A function that is used as the key when sorting versions from first to last
+        - This is passed as the `key` argument to `sorted`
     :param kwargs:
         - These are additional arguments that will be applied to each mounted, versioned app
         - For example, if you want to use `swagger_ui_parameters` for all version docs pages, you would
@@ -146,12 +155,31 @@ def versionize(
     version_route_mapping = _get_version_route_mapping(app=app, default_version=default_version)
     version_remove_route_mapping = _get_version_remove_route_mapping(app=app)
 
+    # Convert prefix_format to a function so its type can be assumed later on
+    if isinstance(prefix_format, str):
+        original_prefix_format = prefix_format
+
+        def prefix_format_func(major_: Any, minor_: Any) -> str:
+            return original_prefix_format.format(major=major_, minor=minor_)
+        prefix_format = prefix_format_func
+
+    # Convert version_format to a function so its type can be assumed later on
+    if isinstance(version_format, str):
+        original_version_format = version_format
+
+        def version_format_func(major_: Any, minor_: Any) -> str:
+            return original_version_format.format(major=major_, minor=minor_)
+        version_format = version_format_func
+
     unique_routes: Dict[str, BaseRoute] = {}
-    versions = sorted(set(version_route_mapping.keys()) | set(version_remove_route_mapping.keys()))
+    versions = sorted(
+        set(version_route_mapping.keys()) | set(version_remove_route_mapping.keys()),
+        key=version_sort_key
+    )
     for version in versions:
         major, minor = version
-        prefix = prefix_format.format(major=major, minor=minor)
-        semver = version_format.format(major=major, minor=minor)
+        prefix = prefix_format(major, minor)
+        semver = version_format(major, minor)
 
         for route in version_route_mapping[version]:
             for unique_key in _get_unique_route_keys(route):
@@ -179,7 +207,7 @@ def versionize(
     if enable_latest:
         version = versions[-1]
         major, minor = version
-        semver = version_format.format(major=major, minor=minor)
+        semver = version_format(major, minor)
         versioned_app = _build_versioned_app(
             app=app,
             version=version,
@@ -201,7 +229,7 @@ def versionize(
     async def get_versions_() -> VersionsModel:
         return VersionsModel(versions=[
             VersionModel(
-                version=version_format.format(major=major, minor=minor)
+                version=version_format(major, minor)
             ) for (major, minor) in versions
         ])
 
@@ -220,9 +248,9 @@ def _get_unique_route_keys(route: BaseRoute) -> List[str]:
 
 def _get_version_route_mapping(
     app: FastAPI,
-    default_version: Tuple[int, int]
-) -> Dict[Tuple[int, int], List[BaseRoute]]:
-    version_route_mapping: Dict[Tuple[int, int], List[BaseRoute]] = defaultdict(list)
+    default_version: Tuple[Any, Any]
+) -> Dict[Tuple[Any, Any], List[BaseRoute]]:
+    version_route_mapping: Dict[Tuple[Any, Any], List[BaseRoute]] = defaultdict(list)
     version_routes = [
         _version_to_route(route=route, default_version=default_version) for route in app.routes
     ]
@@ -235,8 +263,8 @@ def _get_version_route_mapping(
 
 def _version_to_route(
     route: BaseRoute,
-    default_version: Tuple[int, int],
-) -> Tuple[Tuple[int, int], BaseRoute]:
+    default_version: Tuple[Any, Any],
+) -> Tuple[Tuple[Any, Any], BaseRoute]:
     api_route = cast(Route, route)
     version = getattr(api_route.endpoint, '_api_version', default_version)
     return version, api_route
@@ -244,8 +272,8 @@ def _version_to_route(
 
 def _get_version_remove_route_mapping(
     app: FastAPI,
-) -> Dict[Tuple[int, int], List[BaseRoute]]:
-    version_remove_route_mapping: Dict[Tuple[int, int], List[BaseRoute]] = defaultdict(list)
+) -> Dict[Tuple[Any, Any], List[BaseRoute]]:
+    version_remove_route_mapping: Dict[Tuple[Any, Any], List[BaseRoute]] = defaultdict(list)
     version_remove_routes = [_version_remove_to_route(route=route) for route in app.routes]
 
     for version, route in version_remove_routes:
@@ -257,7 +285,7 @@ def _get_version_remove_route_mapping(
 
 def _version_remove_to_route(
     route: BaseRoute,
-) -> Tuple[Union[Tuple[int, int], None], BaseRoute]:
+) -> Tuple[Union[Tuple[Any, Any], None], BaseRoute]:
     api_route = cast(Route, route)
     version = getattr(api_route.endpoint, '_api_version_remove', None)
     return version, api_route
@@ -265,12 +293,12 @@ def _version_remove_to_route(
 
 def _build_versioned_app(
     app: FastAPIT,
-    version: Tuple[int, int],
+    version: Tuple[Any, Any],
     semver: str,
     unique_routes: Dict[str, BaseRoute],
-    get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
-    get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
-    get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
+    get_openapi: Union[Callable[[FastAPI, Tuple[Any, Any]], Dict[str, Any]], None] = None,
+    get_docs: Union[Callable[[Tuple[Any, Any]], HTMLResponse], None] = None,
+    get_redoc: Union[Callable[[Tuple[Any, Any]], HTMLResponse], None] = None,
     **kwargs: Any
 ) -> FastAPIT:
     docs_url = kwargs.pop('docs_url', None)
