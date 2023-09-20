@@ -13,6 +13,7 @@ jobs:
           python-version: '3.7'
       - run: make install-dev
       - run: make build
+      - run: make test-install-build
       - env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}

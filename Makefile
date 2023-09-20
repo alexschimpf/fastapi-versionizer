@@ -23,7 +23,12 @@ help:
 
 # build python package
 build:
-	python setup.py sdist
+	rm -rf dist && rm -rf fastapi_versionizer.egg-info && python setup.py sdist
+
+
+# test install of build
+test-install-build:
+	pip install dist/$(shell ls dist | grep tar.gz | head -1)
 
 # deploy package to pypi
 deploy:
