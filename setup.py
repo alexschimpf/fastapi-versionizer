@@ -22,8 +22,11 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/alexschimpf/fastapi-versionizer',
-    package_data={'fastapi_versionizer': ['py.typed']},
-    packages=['fastapi_versionizer'],
+    packages=['', 'fastapi_versionizer'],
+    package_data={
+        '': ['README.md', 'requirements.txt', 'package.json'],
+        'fastapi_versionizer': ['py.typed']
+    },
     classifiers=[
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
