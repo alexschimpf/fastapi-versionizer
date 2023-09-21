@@ -9,7 +9,7 @@ class TestSorted(TestCase):
     def test_sorted(self) -> None:
         test_client = TestClient(app)
 
-        self.assertListEqual([(1, 0), (2, 0), (2, 1)], versions)
+        self.assertListEqual([(1, 0), (2, 0), (2, 1), (3, 0)], versions)
         self.assertEqual(404, test_client.get('/').status_code)
 
         self.assertEqual(200, test_client.get('/v1.0/openapi.json').status_code)
@@ -23,6 +23,10 @@ class TestSorted(TestCase):
         self.assertEqual(200, test_client.post('/v2.0/aaa_do_something_new').status_code)
 
         self.assertEqual(200, test_client.post('/v2.1/aaa_do_something_new').status_code)
+
+        self.assertEqual(200, test_client.get('/v3.0/test-route').status_code)
+        self.assertEqual(200, test_client.get('/v3.0/test-route/aaa').status_code)
+        self.assertEqual(200, test_client.get('/v3.0/test-route/bbb').status_code)
 
         self.assertDictEqual(
             {
@@ -45,15 +49,22 @@ class TestSorted(TestCase):
 
         self.assertListEqual(
             ['/aaa_do_something_new', '/bbb_do_something_else', '/xxx_do_something'],
-            list(test_client.get('/latest/openapi.json').json()['paths'].keys())
-        )
-
-        self.assertListEqual(
-            ['/aaa_do_something_new', '/bbb_do_something_else', '/xxx_do_something'],
             list(test_client.get('/v2.1/openapi.json').json()['paths'].keys())
         )
 
         self.assertEqual(
             'Do Something Newer',
             test_client.get('/v2.1/openapi.json').json()['paths']['/aaa_do_something_new']['post']['summary']
+        )
+
+        self.assertEqual(
+            ['/aaa_do_something_new', '/bbb_do_something_else', '/test-route', '/test-route/aaa', '/test-route/bbb',
+             '/xxx_do_something'],
+            list(test_client.get('/v3.0/openapi.json').json()['paths'].keys())
+        )
+
+        self.assertListEqual(
+            ['/aaa_do_something_new', '/bbb_do_something_else', '/test-route', '/test-route/aaa', '/test-route/bbb',
+             '/xxx_do_something'],
+            list(test_client.get('/latest/openapi.json').json()['paths'].keys())
         )

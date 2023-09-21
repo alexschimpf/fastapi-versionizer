@@ -44,6 +44,24 @@ async def do_something_newer() -> Any:
     return {'message': 'something newer'}
 
 
+@api_version(3, 0)
+@app.get('/test-route/bbb', tags=['Version 3.0 test route'])
+async def test_route_get_01() -> Any:
+    return {'message': 'testing natural sort, this should appear below /test-route and below /test-route/aaa'}
+
+
+@api_version(3, 0)
+@app.get('/test-route/aaa', tags=['Version 3.0 test route'])
+async def test_route_get_02() -> Any:
+    return {'message': 'testing natural sort, this should appear below /test-route'}
+
+
+@api_version(3, 0)
+@app.get('/test-route', tags=['Version 3.0 test route'])
+async def test_route_get_03() -> Any:
+    return {'message': 'hello world'}
+
+
 '''
 - Notes:
     - "/v1.0/docs" and "/v2.0/docs" pages are generated, because `docs_url` is given
@@ -56,6 +74,9 @@ async def do_something_newer() -> Any:
     - /v2.0/bbb_do_something_else
     - /v2.0/aaa_do_something_new
     - /v2.1/aaa_do_something_new
+    - /v3.0/test-route
+    - /v3.0/test-route/aaa
+    - /v3.0/test-route/bbb
 '''
 versions = versionize(
     app=app,
