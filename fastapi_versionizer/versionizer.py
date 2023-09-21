@@ -154,11 +154,11 @@ def versionize(
         semver = version_format.format(major=major, minor=minor)
 
         for route in version_route_mapping[version]:
-            for unique_key in _get_unique_route_keys(route):
+            for unique_key in _get_unique_route_keys_padded(route):
                 unique_routes[unique_key] = route
 
         for route in version_remove_route_mapping[version]:
-            for unique_key in _get_unique_route_keys(route):
+            for unique_key in _get_unique_route_keys_padded(route):
                 if unique_key in unique_routes:
                     del unique_routes[unique_key]
                 else:
@@ -208,13 +208,14 @@ def versionize(
     return versions
 
 
-def _get_unique_route_keys(route: BaseRoute) -> List[str]:
+def _get_unique_route_keys_padded(route: BaseRoute) -> List[str]:
     result = []
+    max_url_path_length = 2048  # commonly cited maximum URL path length, no RFC standard value.
     if isinstance(route, APIRoute):
         for method in route.methods:
-            result.append(route.path + '|' + method)
+            result.append(route.path.ljust(max_url_path_length, ' ') + '|' + method)
     elif isinstance(route, WebSocketRoute):
-        result.append(route.path)
+        result.append(route.path.ljust(max_url_path_length, ' '))
     return result
 
 
