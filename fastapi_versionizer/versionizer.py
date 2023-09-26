@@ -97,6 +97,7 @@ def versionize(
     get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
+    callback: Union[Callable[[FastAPI, Tuple[int, int], str], None], None] = None,
     **kwargs: Any
 ) -> List[Tuple[int, int]]:
     """
@@ -133,6 +134,11 @@ def versionize(
         - This is used to generate the Redoc docs for each version
         - You will likely want to use `fastapi.openapi.docs.get_redoc_html` for this
         - This page's URL path will be derived from kwargs['redoc_url']
+    :param callback:
+        - A function that takes in 3 arguments: a FastAPI app, its version, and the mount path
+        - This function should return nothing
+        - This is called each time a FastAPI versioned app is created but before being mounted
+        - This includes when the "latest" app is created (when enable_latest=True)
     :param kwargs:
         - These are additional arguments that will be applied to each mounted, versioned app
         - For example, if you want to use `swagger_ui_parameters` for all version docs pages, you would
@@ -169,9 +175,11 @@ def versionize(
             version=version,
             semver=semver,
             unique_routes=dict(sorted(unique_routes.items())) if sorted_routes else unique_routes,
+            prefix=prefix,
             get_openapi=get_openapi,
             get_docs=get_docs,
             get_redoc=get_redoc,
+            callback=callback,
             **kwargs
         )
         app.mount(path=prefix, app=versioned_app, name=prefix[1:])
@@ -185,9 +193,11 @@ def versionize(
             version=version,
             semver=semver,
             unique_routes=dict(sorted(unique_routes.items())) if sorted_routes else unique_routes,
+            prefix=latest_prefix,
             get_openapi=get_openapi,
             get_docs=get_docs,
             get_redoc=get_redoc,
+            callback=callback,
             **kwargs
         )
         app.mount(path=latest_prefix, app=versioned_app, name=latest_prefix[1:])
@@ -268,9 +278,11 @@ def _build_versioned_app(
     version: Tuple[int, int],
     semver: str,
     unique_routes: Dict[str, BaseRoute],
+    prefix: str,
     get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
+    callback: Union[Callable[[FastAPI, Tuple[int, int], str], None], None] = None,
     **kwargs: Any
 ) -> FastAPIT:
     docs_url = kwargs.pop('docs_url', None)
@@ -305,5 +317,8 @@ def _build_versioned_app(
         @versioned_app.get(cast(str, redoc_url), include_in_schema=False)
         def get_redoc_() -> HTMLResponse:
             return get_redoc(version)
+
+    if callback:
+        callback(versioned_app, version, prefix)
 
     return versioned_app
