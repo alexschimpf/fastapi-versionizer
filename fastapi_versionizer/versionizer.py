@@ -135,7 +135,7 @@ def versionize(
         - You will likely want to use `fastapi.openapi.docs.get_redoc_html` for this
         - This page's URL path will be derived from kwargs['redoc_url']
     :param callback:
-        - A function that takes in 3 arguments: a FastAPI app, its version, and the mount path
+        - A function that takes in 3 arguments: a FastAPI app, its version, and the version path prefix
         - This function should return nothing
         - This is called each time a FastAPI versioned app is created but before being mounted
         - This includes when the "latest" app is created (when enable_latest=True)
