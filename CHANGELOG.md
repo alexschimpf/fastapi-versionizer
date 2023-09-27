@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.0.1...v1.1.0) (2023-09-27)
+
+
+### Features
+
+* Added callback feature ([43a8e77](https://github.com/alexschimpf/fastapi-versionizer/commit/43a8e77eb1cf57ec00385a4ee5bfd3751e1fc9a0))
+
 ## [1.0.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.0.0...v1.0.1) (2023-09-20)
 
 
