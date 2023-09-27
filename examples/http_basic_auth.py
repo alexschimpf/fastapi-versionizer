@@ -6,7 +6,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 from pydantic import BaseModel
 
-from fastapi_versionizer.versionizer import api_version, api_version_remove, versionize
+from fastapi_versionizer.versionizer import api_version, versionize
 
 
 USERNAME = 'test'
@@ -34,23 +34,9 @@ async def do_something_else() -> Any:
 
 
 @api_version(2)
-@api_version_remove(3)
 @app.post('/do_something', tags=['Something'])
 async def do_something_v2() -> Any:
     return {'message': 'something'}
-
-
-@api_version(2)
-@api_version_remove(3)
-@app.post('/do_something_new', tags=['Something New'])
-async def do_something_new() -> Any:
-    return {'message': 'something new'}
-
-
-@api_version(4)
-@app.post('/do_something', tags=['Something'])
-async def do_something_v4() -> Any:
-    return {'message': 'something re-added'}
 
 
 def callback(app_: FastAPI, _: Tuple[int, int], prefix: str) -> None:
