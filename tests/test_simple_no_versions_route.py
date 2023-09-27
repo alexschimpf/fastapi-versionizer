@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
 from unittest import TestCase
-from examples.simple import app, versions
+from examples.simple_no_versions_route import app, versions
 
 
 class TestSimple(TestCase):
@@ -14,7 +14,7 @@ class TestSimple(TestCase):
         self.assertEqual(404, test_client.get('/docs').status_code)
         self.assertEqual(404, test_client.get('/redoc').status_code)
         self.assertEqual(200, test_client.get('/openapi.json').status_code)
-        self.assertEqual(200, test_client.get('/versions').status_code)
+        self.assertEqual(404, test_client.get('/versions').status_code)
 
         self.assertEqual(200, test_client.get('/v1/docs').status_code)
         self.assertEqual(200, test_client.get('/v1/redoc').status_code)
@@ -50,10 +50,6 @@ class TestSimple(TestCase):
         self.assertEqual(404, test_client.get('/latest/do_something').status_code)
         self.assertEqual(404, test_client.get('/latest/do_something_else').status_code)
         self.assertEqual(404, test_client.get('/latest/do_something_new').status_code)
-        self.assertEqual(
-            404,
-            test_client.get('/versions').status_code
-        )
 
         self.assertDictEqual(
             {'something': 'something'},
