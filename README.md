@@ -27,8 +27,11 @@ You can find examples in the [examples](https://github.com/alexschimpf/fastapi-v
   - You can generate each versioned Redoc page using `get_redoc` and `redoc_url`
     - This is useful if you need to want to customize your Redoc HTML using `fastapi.openapi.docs.get_redoc_html`
     - The usage of this is very similar to `get_docs`
-  - You can sort the routes within a version to occur by route-path-name using `sorted_routes` see
-    the Sorted Example for more details.
+  - You can sort the routes within a version to occur by route-path-name using `sorted_routes`
+    - See the [Sorted Example](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/sorted.py) for more details.
+  - You can pass a `callback` function parameter, which is fired every time a versioned sub-application is created before being mounted
+    - This can be useful for generating custom routes or a highly customized docs page (e.g. one with required auth) for each version
+    - See the [HTTP Basic Auth Example](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/http_basic_auth.py) for more details.
   - You can pass additional `kwargs` that will be supplied to each versioned sub-application
     - Note: `app.title` and `app.description` are automatically supplied to each versioned sub-application
     - For all other FastAPI parameters, these must be passed via `kwargs`
