@@ -50,11 +50,9 @@ async def do_something_v4() -> Any:
 - Notes:
     - "/v1/docs" and "/v2/docs" pages are generated, because `docs_url` is given
     - "/v1/redoc" and "/v2/redoc" pages are generated because `redoc_url` is given
-    - "/versions" is automatically generated
 
 - This will create the following endpoints:
     - /openapi.json
-    - /versions
 
     - /v1/docs
     - /v1/redoc
@@ -85,5 +83,5 @@ versions = versionize(
     prefix_format='/v{major}',
     docs_url='/docs',
     redoc_url='/redoc',
-    enable_version_route=False
+    enable_versions_route=False
 )

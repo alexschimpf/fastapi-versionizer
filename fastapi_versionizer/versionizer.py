@@ -98,7 +98,7 @@ def versionize(
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     get_redoc: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
     callback: Union[Callable[[FastAPI, Tuple[int, int], str], None], None] = None,
-    enable_version_route: bool = True,
+    enable_versions_route: bool = True,
     **kwargs: Any
 ) -> List[Tuple[int, int]]:
     """
@@ -140,7 +140,7 @@ def versionize(
         - This function should return nothing
         - This is called each time a FastAPI versioned app is created but before being mounted
         - This includes when the "latest" app is created (when enable_latest=True)
-    :param enable_version_route:
+    :param enable_versions_route:
         - Adds a top level "/versions" endpoint for exposing available versions.
         - This allows you to create it yourself, or leave it entirely.
     :param kwargs:
@@ -211,7 +211,7 @@ def versionize(
         if isinstance(route, Mount) or (isinstance(route, Route) and route.path == app.openapi_url)
     ]
 
-    if enable_version_route:
+    if enable_versions_route:
         @app.get('/versions', response_model=VersionsModel, tags=['Versions'])
         async def get_versions_() -> VersionsModel:
             return VersionsModel(versions=[

@@ -4,7 +4,7 @@ from unittest import TestCase
 from examples.simple_no_versions_route import app, versions
 
 
-class TestSimple(TestCase):
+class TestSimpleNoVersionsRoute(TestCase):
 
     def test_simple(self) -> None:
         test_client = TestClient(app)
