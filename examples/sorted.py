@@ -16,46 +16,57 @@ class TestModel(BaseModel):
     something: str
 
 
-@app.post('/xxx_do_something', tags=['Something'], response_model=TestModel)
+@app.post('/1', tags=['Something'], response_model=TestModel)
 async def do_something(test: TestModel) -> Any:
     return test
 
 
-@app.post('/bbb_do_something_else', tags=['Something Else'])
+@app.post('/2', tags=['Something Else'])
 async def do_something_else() -> Any:
     return {'message': 'something else'}
 
 
 @api_version(2)
-@app.post('/xxx_do_something', tags=['Something'])
+@app.post('/1', tags=['Something'])
 async def do_something_v2() -> Any:
     return {'message': 'something'}
 
 
-@api_version(2)
-@app.post('/aaa_do_something_new', tags=['Something New'])
+@api_version(10)
+@app.post('/10', tags=['Something New'])
 async def do_something_new() -> Any:
     return {'message': 'something new'}
 
 
-@api_version(2, 1)
-@app.post('/aaa_do_something_new', tags=['Something New'])
+@api_version(10, 1)
+@app.post('/10', tags=['Something New'])
 async def do_something_newer() -> Any:
     return {'message': 'something newer'}
 
 
+@api_version(10, 1)
+@app.post('/10/0', tags=['Something Newe'])
+async def do_something_newest() -> Any:
+    return {'message': 'something newest'}
+
+
 '''
 - Notes:
-    - "/v1.0/docs" and "/v2.0/docs" pages are generated, because `docs_url` is given
+    - "/v1.0/docs", "/v2.0/docs", "/v10.0/docs", and "/v10.1/docs" pages are generated, because `docs_url` is given
     - "/versions" is automatically generated
 
 - We test and seek the following endpoints:
-    - /v1.0/xxx_do_something
-    - /v1.0/bbb_do_something_else
-    - /v2.0/xxx_do_something
-    - /v2.0/bbb_do_something_else
-    - /v2.0/aaa_do_something_new
-    - /v2.1/aaa_do_something_new
+    - /v1.0/1
+    - /v1.0/2
+    - /v2.0/1
+    - /v2.0/2
+    - /v10.0/1
+    - /v10.0/2
+    - /v10.0/10
+    - /v10.1/1
+    - /v10.1/2
+    - /v10.1/10
+    - /v10.1/10/0
 '''
 versions = versionize(
     app=app,
