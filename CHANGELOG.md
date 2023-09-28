@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.1.1...v1.2.0) (2023-09-28)
+
+
+### Features
+
+* Added enable_versions_route param ([e3afcce](https://github.com/alexschimpf/fastapi-versionizer/commit/e3afcce98b9422dc3f54d722fc9168030e1c7e75))
+
 ## [1.1.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.1.0...v1.1.1) (2023-09-28)
 
 
