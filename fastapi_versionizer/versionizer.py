@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.routing import APIRoute, Mount
 from starlette.routing import BaseRoute, Route, WebSocketRoute
 from pydantic import BaseModel
-from natsort import os_sorted
+from natsort import natsorted
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 FastAPIT = TypeVar('FastAPIT', bound=FastAPI)
@@ -174,7 +174,7 @@ def versionize(
             app=app,
             version=version,
             semver=semver,
-            unique_routes=dict(os_sorted(unique_routes.items())) if sorted_routes else unique_routes,
+            unique_routes=dict(natsorted(unique_routes.items())) if sorted_routes else unique_routes,
             prefix=prefix,
             get_openapi=get_openapi,
             get_docs=get_docs,
@@ -192,7 +192,7 @@ def versionize(
             app=app,
             version=version,
             semver=semver,
-            unique_routes=dict(os_sorted(unique_routes.items())) if sorted_routes else unique_routes,
+            unique_routes=dict(natsorted(unique_routes.items())) if sorted_routes else unique_routes,
             prefix=latest_prefix,
             get_openapi=get_openapi,
             get_docs=get_docs,
