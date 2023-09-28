@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Any, Callable, Dict, List, Tuple, TypeVar, cast, Union, Type
-
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.routing import APIRoute, Mount
 from starlette.routing import BaseRoute, Route, WebSocketRoute
 from pydantic import BaseModel
+from natsort import os_sorted
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 FastAPIT = TypeVar('FastAPIT', bound=FastAPI)
@@ -152,7 +152,7 @@ def versionize(
     version_route_mapping = _get_version_route_mapping(app=app, default_version=default_version)
     version_remove_route_mapping = _get_version_remove_route_mapping(app=app)
 
-    unique_routes: Dict[str, BaseRoute] = {}
+    unique_routes: Dict[Tuple[str, str], BaseRoute] = {}
     versions = sorted(set(version_route_mapping.keys()) | set(version_remove_route_mapping.keys()))
     for version in versions:
         major, minor = version
@@ -174,7 +174,7 @@ def versionize(
             app=app,
             version=version,
             semver=semver,
-            unique_routes=dict(sorted(unique_routes.items())) if sorted_routes else unique_routes,
+            unique_routes=dict(os_sorted(unique_routes.items())) if sorted_routes else unique_routes,
             prefix=prefix,
             get_openapi=get_openapi,
             get_docs=get_docs,
@@ -192,7 +192,7 @@ def versionize(
             app=app,
             version=version,
             semver=semver,
-            unique_routes=dict(sorted(unique_routes.items())) if sorted_routes else unique_routes,
+            unique_routes=dict(os_sorted(unique_routes.items())) if sorted_routes else unique_routes,
             prefix=latest_prefix,
             get_openapi=get_openapi,
             get_docs=get_docs,
@@ -218,13 +218,13 @@ def versionize(
     return versions
 
 
-def _get_unique_route_keys(route: BaseRoute) -> List[str]:
+def _get_unique_route_keys(route: BaseRoute) -> List[Tuple[str, str]]:
     result = []
     if isinstance(route, APIRoute):
         for method in route.methods:
-            result.append(route.path + '|' + method)
+            result.append((route.path, method))
     elif isinstance(route, WebSocketRoute):
-        result.append(route.path)
+        result.append((route.path, ''))
     return result
 
 
@@ -277,7 +277,7 @@ def _build_versioned_app(
     app: FastAPIT,
     version: Tuple[int, int],
     semver: str,
-    unique_routes: Dict[str, BaseRoute],
+    unique_routes: Dict[Tuple[str, str], BaseRoute],
     prefix: str,
     get_openapi: Union[Callable[[FastAPI, Tuple[int, int]], Dict[str, Any]], None] = None,
     get_docs: Union[Callable[[Tuple[int, int]], HTMLResponse], None] = None,
