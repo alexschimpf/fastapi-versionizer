@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.1.0...v1.1.1) (2023-09-28)
+
+
+### Bug Fixes
+
+* Now using natural sorting for routes for sorted_routes=True ([d55af27](https://github.com/alexschimpf/fastapi-versionizer/commit/d55af275bbc5e55c7ee203b04aeff65e09893c93))
+
 ## [1.1.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.0.1...v1.1.0) (2023-09-27)
 
 
