@@ -1,3 +1,10 @@
+## [2.0.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.2.0...v2.0.0) (2023-10-02)
+
+
+### Breaking Changes
+
+* Redesigned FastAPI versionizer ([4cd0fd1](https://github.com/alexschimpf/fastapi-versionizer/commit/4cd0fd1d3e93eb1845439743ed907d562a508bb9))
+
 ## [1.2.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.1.1...v1.2.0) (2023-09-28)
 
 
