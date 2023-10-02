@@ -1,88 +1,138 @@
-from typing import Any
+# mypy: disable-error-code="no-any-return"
+# flake8: noqa: A003
 
-from fastapi import FastAPI
+from typing import List, Any, Dict
+from fastapi import FastAPI, APIRouter
 from pydantic import BaseModel
 
-from fastapi_versionizer.versionizer import api_version, api_version_remove, versionize
+from fastapi_versionizer.versionizer import Versionizer, api_version
 
 
+class User(BaseModel):
+    id: int
+    name: str
+
+
+class UserV2(BaseModel):
+    id: int
+    name: str
+    age: int
+
+
+class Item(BaseModel):
+    id: int
+    name: str
+
+
+class ItemV2(BaseModel):
+    id: int
+    name: str
+    cost: int
+
+
+class DB:
+    def __init__(self) -> None:
+        self.users: Dict[int, Any] = {}
+        self.items: Dict[int, Any] = {}
+
+
+db = DB()
 app = FastAPI(
-    title='My Versioned API',
-    description='Look, I can version my APIs!'
+    title='test',
+    redoc_url=None
+)
+users_router = APIRouter(
+    prefix='/users',
+    tags=['Users']
+)
+items_router = APIRouter(
+    prefix='/items',
+    tags=['Items']
 )
 
 
-class TestModel(BaseModel):
-    something: str
+@app.get('/status', tags=['Status'])
+def get_status() -> str:
+    return 'Ok'
 
 
-@app.post('/do_something', tags=['Something'], response_model=TestModel)
-async def do_something(test: TestModel) -> Any:
-    return test
+@api_version(1)
+@users_router.get('', deprecated=True)
+def get_users() -> List[User]:
+    return list(db.users.values())
 
 
-@app.post('/do_something_else', tags=['Something Else'])
-async def do_something_else() -> Any:
-    return {'message': 'something else'}
+@api_version(1)
+@users_router.post('', deprecated=True)
+def create_user(user: User) -> User:
+    db.users[user.id] = user
+    return user
+
+
+@api_version(1)
+@users_router.get('/{user_id}', deprecated=True)
+def get_user(user_id: int) -> User:
+    return db.users[user_id]
 
 
 @api_version(2)
-@api_version_remove(3)
-@app.post('/do_something', tags=['Something'])
-async def do_something_v2() -> Any:
-    return {'message': 'something'}
+@users_router.get('')
+def get_users_v2() -> List[UserV2]:
+    return list(user for user in db.users.values() if isinstance(user, UserV2))
 
 
 @api_version(2)
-@api_version_remove(3)
-@app.post('/do_something_new', tags=['Something New'])
-async def do_something_new() -> Any:
-    return {'message': 'something new'}
+@users_router.post('')
+def create_user_v2(user: UserV2) -> UserV2:
+    db.users[user.id] = user
+    return user
 
 
-@api_version(4)
-@app.post('/do_something', tags=['Something'])
-async def do_something_v4() -> Any:
-    return {'message': 'something re-added'}
+@api_version(2)
+@users_router.get('/{user_id}')
+def get_user_v2(user_id: int) -> UserV2:
+    return db.users[user_id]
 
 
-'''
-- Notes:
-    - "/v1/docs" and "/v2/docs" pages are generated, because `docs_url` is given
-    - "/v1/redoc" and "/v2/redoc" pages are generated because `redoc_url` is given
-    - "/versions" is automatically generated
+@api_version(1)
+@items_router.get('', deprecated=True)
+def get_items() -> List[Item]:
+    return list(db.items.values())
 
-- This will create the following endpoints:
-    - /openapi.json
-    - /versions
 
-    - /v1/docs
-    - /v1/redoc
-    - /v1/openapi.json
-    - /v1/do_something
-    - /v1/do_something_else
+@api_version(1)
+@items_router.post('', deprecated=True)
+def create_item(item: Item) -> Item:
+    db.items[item.id] = item
+    return item
 
-    - /v2/docs
-    - /v2/redoc
-    - /v2/openapi.json
-    - /v2/do_something
-    - /v2/do_something_else
-    - /v2/do_something_new
 
-    - /v3/docs
-    - /v3/redoc
-    - /v3/openapi.json
-    - /v3/do_something_else
+@api_version(1, remove_in_major=2)
+@items_router.get('/{item_id}', deprecated=True)
+def get_item(item_id: int) -> Item:
+    return db.items[item_id]
 
-    - /v4/docs
-    - /v4/redoc
-    - /v4/openapi.json
-    - /v4/do_something
-    - /v4/do_something_else
-'''
-versions = versionize(
+
+@api_version(2)
+@items_router.get('')
+def get_items_v2() -> List[ItemV2]:
+    return list(item for item in db.items.values() if isinstance(item, ItemV2))
+
+
+@api_version(2)
+@items_router.post('')
+def create_item_v2(item: ItemV2) -> ItemV2:
+    db.items[item.id] = item
+    return item
+
+
+app.include_router(users_router)
+app.include_router(items_router)
+
+app, versions = Versionizer(
     app=app,
     prefix_format='/v{major}',
-    docs_url='/docs',
-    redoc_url='/redoc'
-)
+    semantic_version_format='{major}',
+    latest_prefix='/latest',
+    sort_routes=True
+).versionize()
