@@ -2,4 +2,4 @@
 max-line-length = 120
 multiline-quotes = '
 docstring-quotes = "
-ignore = T201
+ignore = T201, W504

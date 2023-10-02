@@ -1,8 +1,6 @@
-from .versionizer import versionize, api_version, api_version_remove, versioned_api_route
+from .versionizer import Versionizer, api_version
 
 __all__ = [
-    'versionize',
-    'api_version',
-    'api_version_remove',
-    'versioned_api_route'
+    'Versionizer',
+    'api_version'
 ]
