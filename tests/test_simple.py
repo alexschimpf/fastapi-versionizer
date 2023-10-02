@@ -64,14 +64,12 @@ class TestSimpleExample(TestCase):
         )
         self.assertListEqual(
             [
-                {'id': 1, 'name': 'alex', 'age': None},
                 {'id': 2, 'name': 'zach', 'age': 30}
             ],
             test_client.get('/v2/users').json()
         )
         self.assertListEqual(
             [
-                {'id': 1, 'name': 'laptop', 'cost': None},
                 {'id': 2, 'name': 'phone', 'cost': 10}
             ],
             test_client.get('/v2/items').json()
@@ -92,7 +90,6 @@ class TestSimpleExample(TestCase):
         )
         self.assertListEqual(
             [
-                {'id': 1, 'name': 'alex', 'age': None},
                 {'id': 2, 'name': 'zach', 'age': 30},
                 {'id': 3, 'name': 'dan', 'age': 65}
             ],
@@ -100,7 +97,6 @@ class TestSimpleExample(TestCase):
         )
         self.assertListEqual(
             [
-                {'id': 1, 'name': 'laptop', 'cost': None},
                 {'id': 2, 'name': 'phone', 'cost': 10},
                 {'id': 3, 'name': 'tv', 'cost': 1000}
             ],
@@ -380,7 +376,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/ItemV2-Output'
+                                                    '$ref': '#/components/schemas/ItemV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Items V2 V2 Items Get'
@@ -400,7 +396,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/ItemV2-Input'
+                                            '$ref': '#/components/schemas/ItemV2'
                                         }
                                     }
                                 },
@@ -412,7 +408,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/ItemV2-Output'
+                                                '$ref': '#/components/schemas/ItemV2'
                                             }
                                         }
                                     }
@@ -466,7 +462,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/UserV2-Output'
+                                                    '$ref': '#/components/schemas/UserV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Users V2 V2 Users Get'
@@ -486,7 +482,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/UserV2-Input'
+                                            '$ref': '#/components/schemas/UserV2'
                                         }
                                     }
                                 },
@@ -498,7 +494,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -540,7 +536,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -572,7 +568,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/ItemV2-Output'
+                                                    '$ref': '#/components/schemas/ItemV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Items V2 Latest Items Get'
@@ -592,7 +588,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/ItemV2-Input'
+                                            '$ref': '#/components/schemas/ItemV2'
                                         }
                                     }
                                 },
@@ -604,7 +600,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/ItemV2-Output'
+                                                '$ref': '#/components/schemas/ItemV2'
                                             }
                                         }
                                     }
@@ -658,7 +654,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/UserV2-Output'
+                                                    '$ref': '#/components/schemas/UserV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Users V2 Latest Users Get'
@@ -678,7 +674,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/UserV2-Input'
+                                            '$ref': '#/components/schemas/UserV2'
                                         }
                                     }
                                 },
@@ -690,7 +686,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -732,7 +728,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -784,7 +780,7 @@ class TestSimpleExample(TestCase):
                             ],
                             'title': 'Item'
                         },
-                        'ItemV2-Input': {
+                        'ItemV2': {
                             'properties': {
                                 'id': {
                                     'type': 'integer',
@@ -795,43 +791,7 @@ class TestSimpleExample(TestCase):
                                     'title': 'Name'
                                 },
                                 'cost': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
-                                    'title': 'Cost'
-                                }
-                            },
-                            'type': 'object',
-                            'required': [
-                                'id',
-                                'name'
-                            ],
-                            'title': 'ItemV2'
-                        },
-                        'ItemV2-Output': {
-                            'properties': {
-                                'id': {
                                     'type': 'integer',
-                                    'title': 'Id'
-                                },
-                                'name': {
-                                    'type': 'string',
-                                    'title': 'Name'
-                                },
-                                'cost': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
                                     'title': 'Cost'
                                 }
                             },
@@ -861,7 +821,7 @@ class TestSimpleExample(TestCase):
                             ],
                             'title': 'User'
                         },
-                        'UserV2-Input': {
+                        'UserV2': {
                             'properties': {
                                 'id': {
                                     'type': 'integer',
@@ -872,43 +832,7 @@ class TestSimpleExample(TestCase):
                                     'title': 'Name'
                                 },
                                 'age': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
-                                    'title': 'Age'
-                                }
-                            },
-                            'type': 'object',
-                            'required': [
-                                'id',
-                                'name'
-                            ],
-                            'title': 'UserV2'
-                        },
-                        'UserV2-Output': {
-                            'properties': {
-                                'id': {
                                     'type': 'integer',
-                                    'title': 'Id'
-                                },
-                                'name': {
-                                    'type': 'string',
-                                    'title': 'Name'
-                                },
-                                'age': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
                                     'title': 'Age'
                                 }
                             },
@@ -1318,7 +1242,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/ItemV2-Output'
+                                                    '$ref': '#/components/schemas/ItemV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Items V2 V2 Items Get'
@@ -1338,7 +1262,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/ItemV2-Input'
+                                            '$ref': '#/components/schemas/ItemV2'
                                         }
                                     }
                                 },
@@ -1350,7 +1274,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/ItemV2-Output'
+                                                '$ref': '#/components/schemas/ItemV2'
                                             }
                                         }
                                     }
@@ -1404,7 +1328,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/UserV2-Output'
+                                                    '$ref': '#/components/schemas/UserV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Users V2 V2 Users Get'
@@ -1424,7 +1348,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/UserV2-Input'
+                                            '$ref': '#/components/schemas/UserV2'
                                         }
                                     }
                                 },
@@ -1436,7 +1360,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -1478,7 +1402,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -1512,7 +1436,7 @@ class TestSimpleExample(TestCase):
                             'type': 'object',
                             'title': 'HTTPValidationError'
                         },
-                        'ItemV2-Input': {
+                        'ItemV2': {
                             'properties': {
                                 'id': {
                                     'type': 'integer',
@@ -1523,43 +1447,7 @@ class TestSimpleExample(TestCase):
                                     'title': 'Name'
                                 },
                                 'cost': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
-                                    'title': 'Cost'
-                                }
-                            },
-                            'type': 'object',
-                            'required': [
-                                'id',
-                                'name'
-                            ],
-                            'title': 'ItemV2'
-                        },
-                        'ItemV2-Output': {
-                            'properties': {
-                                'id': {
                                     'type': 'integer',
-                                    'title': 'Id'
-                                },
-                                'name': {
-                                    'type': 'string',
-                                    'title': 'Name'
-                                },
-                                'cost': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
                                     'title': 'Cost'
                                 }
                             },
@@ -1571,7 +1459,7 @@ class TestSimpleExample(TestCase):
                             ],
                             'title': 'ItemV2'
                         },
-                        'UserV2-Input': {
+                        'UserV2': {
                             'properties': {
                                 'id': {
                                     'type': 'integer',
@@ -1582,43 +1470,7 @@ class TestSimpleExample(TestCase):
                                     'title': 'Name'
                                 },
                                 'age': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
-                                    'title': 'Age'
-                                }
-                            },
-                            'type': 'object',
-                            'required': [
-                                'id',
-                                'name'
-                            ],
-                            'title': 'UserV2'
-                        },
-                        'UserV2-Output': {
-                            'properties': {
-                                'id': {
                                     'type': 'integer',
-                                    'title': 'Id'
-                                },
-                                'name': {
-                                    'type': 'string',
-                                    'title': 'Name'
-                                },
-                                'age': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
                                     'title': 'Age'
                                 }
                             },
@@ -1690,7 +1542,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/ItemV2-Output'
+                                                    '$ref': '#/components/schemas/ItemV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Items V2 Latest Items Get'
@@ -1710,7 +1562,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/ItemV2-Input'
+                                            '$ref': '#/components/schemas/ItemV2'
                                         }
                                     }
                                 },
@@ -1722,7 +1574,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/ItemV2-Output'
+                                                '$ref': '#/components/schemas/ItemV2'
                                             }
                                         }
                                     }
@@ -1776,7 +1628,7 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 'items': {
-                                                    '$ref': '#/components/schemas/UserV2-Output'
+                                                    '$ref': '#/components/schemas/UserV2'
                                                 },
                                                 'type': 'array',
                                                 'title': 'Response Get Users V2 Latest Users Get'
@@ -1796,7 +1648,7 @@ class TestSimpleExample(TestCase):
                                 'content': {
                                     'application/json': {
                                         'schema': {
-                                            '$ref': '#/components/schemas/UserV2-Input'
+                                            '$ref': '#/components/schemas/UserV2'
                                         }
                                     }
                                 },
@@ -1808,7 +1660,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -1850,7 +1702,7 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                '$ref': '#/components/schemas/UserV2-Output'
+                                                '$ref': '#/components/schemas/UserV2'
                                             }
                                         }
                                     }
@@ -1884,7 +1736,7 @@ class TestSimpleExample(TestCase):
                             'type': 'object',
                             'title': 'HTTPValidationError'
                         },
-                        'ItemV2-Input': {
+                        'ItemV2': {
                             'properties': {
                                 'id': {
                                     'type': 'integer',
@@ -1895,43 +1747,7 @@ class TestSimpleExample(TestCase):
                                     'title': 'Name'
                                 },
                                 'cost': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
-                                    'title': 'Cost'
-                                }
-                            },
-                            'type': 'object',
-                            'required': [
-                                'id',
-                                'name'
-                            ],
-                            'title': 'ItemV2'
-                        },
-                        'ItemV2-Output': {
-                            'properties': {
-                                'id': {
                                     'type': 'integer',
-                                    'title': 'Id'
-                                },
-                                'name': {
-                                    'type': 'string',
-                                    'title': 'Name'
-                                },
-                                'cost': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
                                     'title': 'Cost'
                                 }
                             },
@@ -1943,7 +1759,7 @@ class TestSimpleExample(TestCase):
                             ],
                             'title': 'ItemV2'
                         },
-                        'UserV2-Input': {
+                        'UserV2': {
                             'properties': {
                                 'id': {
                                     'type': 'integer',
@@ -1954,43 +1770,7 @@ class TestSimpleExample(TestCase):
                                     'title': 'Name'
                                 },
                                 'age': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
-                                    'title': 'Age'
-                                }
-                            },
-                            'type': 'object',
-                            'required': [
-                                'id',
-                                'name'
-                            ],
-                            'title': 'UserV2'
-                        },
-                        'UserV2-Output': {
-                            'properties': {
-                                'id': {
                                     'type': 'integer',
-                                    'title': 'Id'
-                                },
-                                'name': {
-                                    'type': 'string',
-                                    'title': 'Name'
-                                },
-                                'age': {
-                                    'anyOf': [
-                                        {
-                                            'type': 'integer'
-                                        },
-                                        {
-                                            'type': 'null'
-                                        }
-                                    ],
                                     'title': 'Age'
                                 }
                             },

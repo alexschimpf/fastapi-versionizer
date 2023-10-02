@@ -55,7 +55,7 @@ def get_status() -> str:
 @api_version(1)
 @users_router.get('', deprecated=True)
 def get_users() -> List[User]:
-    return list(db['users'].values())
+    return list(user for user in db['users'].values() if isinstance(user, User))
 
 
 @api_version(1)
@@ -68,7 +68,7 @@ def create_user(user: User) -> User:
 @api_version(2)
 @users_router.get('')
 def get_users_v2() -> List[UserV2]:
-    return list(db['users'].values())
+    return list(user for user in db['users'].values() if isinstance(user, UserV2))
 
 
 @api_version(2)

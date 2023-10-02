@@ -7,8 +7,7 @@ from fastapi.openapi.docs import get_redoc_html
 import fastapi.openapi.utils
 from fastapi.responses import HTMLResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from pydantic import BaseModel
-from typing import Any, Dict, TypedDict, Tuple
+from typing import Any, Tuple
 
 from fastapi_versionizer.versionizer import Versionizer, api_version
 
@@ -16,39 +15,7 @@ ICON_URL = 'https://avatars.githubusercontent.com/u/6480668?s=400&u=22411d8d949f
 USERNAME = 'test'
 PASSWORD = 'secret!'
 
-
-class User(BaseModel):
-    id: int
-    name: str
-
-
-class UserV2(BaseModel):
-    id: int
-    name: str
-    age: int
-
-
-class Item(BaseModel):
-    id: int
-    name: str
-
-
-class ItemV2(BaseModel):
-    id: int
-    name: str
-    cost: int
-
-
-class DB(TypedDict):
-    users: Dict[int, Any]
-    items: Dict[int, Any]
-
-
 security = HTTPBasic()
-db: DB = {
-    'users': {},
-    'items': {}
-}
 app = FastAPI(
     title='test'
 )

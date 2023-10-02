@@ -16,7 +16,7 @@ class User(BaseModel):
 class UserV2(BaseModel):
     id: int
     name: str
-    age: Union[int, None] = None
+    age: int
 
 
 class Item(BaseModel):
@@ -27,7 +27,7 @@ class Item(BaseModel):
 class ItemV2(BaseModel):
     id: int
     name: str
-    cost: Union[int, None] = None
+    cost: int
 
 
 class DB(TypedDict):
@@ -80,7 +80,7 @@ def get_user(user_id: int) -> User:
 @api_version(2)
 @users_router.get('')
 def get_users_v2() -> List[UserV2]:
-    return list(db['users'].values())
+    return list(user for user in db['users'].values() if isinstance(user, UserV2))
 
 
 @api_version(2)
@@ -118,7 +118,7 @@ def get_item(item_id: int) -> Item:
 @api_version(2)
 @items_router.get('')
 def get_items_v2() -> List[ItemV2]:
-    return list(db['items'].values())
+    return list(item for item in db['items'].values() if isinstance(item, ItemV2))
 
 
 @api_version(2)
