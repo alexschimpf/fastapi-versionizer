@@ -1,3 +1,10 @@
+## [2.1.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.0.0...v2.1.0) (2023-10-03)
+
+
+### Features
+
+* Added include_versions_route parameter ([42dcaf7](https://github.com/alexschimpf/fastapi-versionizer/commit/42dcaf73bf2bff7d6b6d734c8c30137b73aa6f06))
+
 ## [2.0.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v1.2.0...v2.0.0) (2023-10-02)
 
 
