@@ -3,7 +3,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.docs import get_swagger_ui_html
 import fastapi.openapi.utils
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.routing import APIRoute
 from natsort import natsorted
 from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union
@@ -48,6 +48,7 @@ class Versionizer:
         include_main_openapi_route: bool = True,
         include_version_docs: bool = True,
         include_version_openapi_route: bool = True,
+        include_versions_route: bool = False,
         sort_routes: bool = False,
         callback: Union[Callable[[APIRouter, Tuple[int, int], str], None], None] = None
     ):
@@ -72,6 +73,8 @@ class Versionizer:
             If True, docs page(s) will be created for each version
         :param include_version_openapi_route:
             If True, an openapi route will be created for each version
+        :param include_versions_route:
+            If True, a "GET /versions" route will be added, which includes information about all API versions
         :param sort_routes:
             If True, all routes will be naturally sorted by path within each version.
             If you have included the main docs page, the routes are sorted within each version, and versions
@@ -93,6 +96,7 @@ class Versionizer:
         self._include_main_openapi_route = include_main_openapi_route
         self._include_version_docs = include_version_docs
         self._include_version_openapi_route = include_version_openapi_route
+        self._include_versions_route = include_versions_route
         self._sort_routes = sort_routes
         self._callback = callback
 
@@ -108,6 +112,7 @@ class Versionizer:
 
         version, routes_by_key = None, None
         routes_by_version = self._get_routes_by_version()
+        versions = list(routes_by_version.keys())
         for version, routes_by_key in routes_by_version.items():
             major, minor = version
             version_prefix = self._prefix_format.format(major=major, minor=minor)
@@ -130,10 +135,13 @@ class Versionizer:
                 self._callback(latest_router, version, '/latest')
             versioned_app.include_router(router=latest_router)
 
+        if self._include_versions_route:
+            self._add_versions_route(versioned_app=versioned_app, versions=versions)
+
         if not self._include_main_docs or not self._include_main_openapi_route:
             self._remove_docs_and_openapi(versioned_app=versioned_app)
 
-        return versioned_app, list(routes_by_version.keys())
+        return versioned_app, versions
 
     def _build_version_router(
         self,
@@ -230,6 +238,37 @@ class Versionizer:
                     openapi_url=f'{version_prefix}/openapi.json',
                     title=title
                 )
+
+    def _add_versions_route(self, versioned_app: FastAPI, versions: List[Tuple[int, int]]) -> None:
+        @versioned_app.get(
+            '/versions',
+            tags=['Versions'],
+            response_class=JSONResponse
+        )
+        def get_versions() -> Dict[str, Any]:
+            version_models: List[Dict[str, Any]] = []
+            for (major, minor) in versions:
+                version_prefix = self._prefix_format.format(major=major, minor=minor)
+                version_str = self._semantic_version_format.format(major=major, minor=minor)
+
+                version_model = {
+                    'version': version_str,
+                }
+
+                if self._include_version_openapi_route:
+                    version_model['openapi_url'] = f'{version_prefix}/openapi.json'
+
+                if self._include_version_docs and versioned_app.docs_url is not None:
+                    version_model['swagger_url'] = f'{version_prefix}{versioned_app.docs_url}'
+
+                if self._include_version_docs and versioned_app.redoc_url is not None:
+                    version_model['redoc_url'] = f'{version_prefix}{versioned_app.redoc_url}'
+
+                version_models.append(version_model)
+
+            return {
+                'versions': version_models
+            }
 
     def _remove_docs_and_openapi(self, versioned_app: FastAPI) -> None:
         paths_to_remove = []

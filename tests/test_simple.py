@@ -26,6 +26,28 @@ class TestSimpleExample(TestCase):
         self.assertEqual(404, test_client.get('/users/1').status_code)
         self.assertEqual(404, test_client.get('/items/1').status_code)
         self.assertEqual(404, test_client.get('/v2/items/1').status_code)
+        self.assertEqual(404, test_client.get('/v1/versions').status_code)
+        self.assertEqual(404, test_client.get('/v2/versions').status_code)
+        self.assertEqual(404, test_client.get('/latest/versions').status_code)
+
+        # versions route
+        self.assertDictEqual(
+            {
+                'versions': [
+                    {
+                        'version': '1',
+                        'openapi_url': '/v1/openapi.json',
+                        'swagger_url': '/v1/docs'
+                    },
+                    {
+                        'version': '2',
+                        'openapi_url': '/v2/openapi.json',
+                        'swagger_url': '/v2/docs',
+                    }
+                ]
+            },
+            test_client.get('/versions').json()
+        )
 
         # v1
         self.assertDictEqual(
@@ -739,6 +761,28 @@ class TestSimpleExample(TestCase):
                                         'application/json': {
                                             'schema': {
                                                 '$ref': '#/components/schemas/HTTPValidationError'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '/versions': {
+                        'get': {
+                            'tags': [
+                                'Versions'
+                            ],
+                            'summary': 'Get Versions',
+                            'operationId': 'get_versions_versions_get',
+                            'responses': {
+                                '200': {
+                                    'description': 'Successful Response',
+                                    'content': {
+                                        'application/json': {
+                                            'schema': {
+                                                'type': 'object',
+                                                'title': 'Response Get Versions Versions Get'
                                             }
                                         }
                                     }
