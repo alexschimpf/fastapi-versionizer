@@ -213,8 +213,8 @@ class Versionizer:
         version_str = f'v{self._semantic_version_format.format(major=version[0], minor=version[1])}'
         title = f'{self._app.title} - {version_str}'
 
-        if self._include_version_openapi_route:
-            @router.get('/openapi.json', include_in_schema=False)
+        if self._include_version_openapi_route and self._app.openapi_url:
+            @router.get(self._app.openapi_url, include_in_schema=False)
             async def get_openapi() -> Any:
                 return fastapi.openapi.utils.get_openapi(
                     title=title,
@@ -222,20 +222,20 @@ class Versionizer:
                     routes=router.routes
                 )
 
-        if self._include_version_docs and self._app.docs_url:
+        if self._include_version_docs and self._app.docs_url and self._app.openapi_url:
             @router.get(self._app.docs_url, include_in_schema=False)
             async def get_docs() -> HTMLResponse:
                 return get_swagger_ui_html(
-                    openapi_url=f'{version_prefix}/openapi.json',
+                    openapi_url=f'{version_prefix}{self._app.openapi_url}',
                     title=title,
                     swagger_ui_parameters=self._app.swagger_ui_parameters
                 )
 
-        if self._include_version_docs and self._app.redoc_url:
+        if self._include_version_docs and self._app.redoc_url and self._app.openapi_url:
             @router.get(self._app.redoc_url, include_in_schema=False)
             async def get_redoc() -> HTMLResponse:
                 return get_redoc_html(
-                    openapi_url=f'{version_prefix}/openapi.json',
+                    openapi_url=f'{version_prefix}{self._app.openapi_url}',
                     title=title
                 )
 
@@ -256,7 +256,7 @@ class Versionizer:
                 }
 
                 if self._include_version_openapi_route:
-                    version_model['openapi_url'] = f'{version_prefix}/openapi.json'
+                    version_model['openapi_url'] = f'{version_prefix}{versioned_app.openapi_url}'
 
                 if self._include_version_docs and versioned_app.docs_url is not None:
                     version_model['swagger_url'] = f'{version_prefix}{versioned_app.docs_url}'

@@ -39,6 +39,8 @@ class DB:
 db = DB()
 app = FastAPI(
     title='test',
+    docs_url='/swagger',
+    openapi_url='/api_schema.json',
     redoc_url=None
 )
 users_router = APIRouter(
