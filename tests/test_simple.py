@@ -36,13 +36,13 @@ class TestSimpleExample(TestCase):
                 'versions': [
                     {
                         'version': '1',
-                        'openapi_url': '/v1/openapi.json',
-                        'swagger_url': '/v1/docs'
+                        'openapi_url': '/v1/api_schema.json',
+                        'swagger_url': '/v1/swagger'
                     },
                     {
                         'version': '2',
-                        'openapi_url': '/v2/openapi.json',
-                        'swagger_url': '/v2/docs',
+                        'openapi_url': '/v2/api_schema.json',
+                        'swagger_url': '/v2/swagger',
                     }
                 ]
             },
@@ -130,10 +130,10 @@ class TestSimpleExample(TestCase):
         )
 
         # docs
-        self.assertEqual(200, test_client.get('/docs').status_code)
-        self.assertEqual(200, test_client.get('/v1/docs').status_code)
-        self.assertEqual(200, test_client.get('/v2/docs').status_code)
-        self.assertEqual(200, test_client.get('/latest/docs').status_code)
+        self.assertEqual(200, test_client.get('/swagger').status_code)
+        self.assertEqual(200, test_client.get('/v1/swagger').status_code)
+        self.assertEqual(200, test_client.get('/v2/swagger').status_code)
+        self.assertEqual(200, test_client.get('/latest/swagger').status_code)
 
         # openapi
         self.assertDictEqual(
@@ -924,7 +924,7 @@ class TestSimpleExample(TestCase):
                     }
                 }
             },
-            test_client.get('/openapi.json').json()
+            test_client.get('/api_schema.json').json()
         )
         self.assertDictEqual(
             {
@@ -1262,7 +1262,7 @@ class TestSimpleExample(TestCase):
                     }
                 }
             },
-            test_client.get('/v1/openapi.json').json()
+            test_client.get('/v1/api_schema.json').json()
         )
         self.assertDictEqual(
             {
@@ -1562,7 +1562,7 @@ class TestSimpleExample(TestCase):
                     }
                 }
             },
-            test_client.get('/v2/openapi.json').json()
+            test_client.get('/v2/api_schema.json').json()
         )
         self.assertDictEqual(
             {
@@ -1862,5 +1862,5 @@ class TestSimpleExample(TestCase):
                     }
                 }
             },
-            test_client.get('/latest/openapi.json').json()
+            test_client.get('/latest/api_schema.json').json()
         )
