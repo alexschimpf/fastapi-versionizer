@@ -139,6 +139,8 @@ An APIRouter will be created for each version, with the URL prefix defined by th
   - If True, docs page(s) will be created for each version
 - <b>include_version_openapi_route</b>
   - If True, an OpenAPI route will be created for each version
+- <b>include_versions_route</b>
+  - If True, a "GET /versions" route will be added, which includes information about all API versions
 - <b>sort_routes</b>
   - If True, all routes will be naturally sorted by path within each version.
   - If you have included the main docs page, the routes are sorted within each version, and versions are sorted from earliest to latest. If you have added a "latest" alias, its routes will be listed last.

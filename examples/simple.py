@@ -134,5 +134,6 @@ app, versions = Versionizer(
     prefix_format='/v{major}',
     semantic_version_format='{major}',
     latest_prefix='/latest',
+    include_versions_route=True,
     sort_routes=True
 ).versionize()
