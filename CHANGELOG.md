@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.0...v2.1.1) (2023-10-03)
+
+
+### Bug Fixes
+
+* Now using app's openapi_url field for OpenAPI URL ([e97d5f9](https://github.com/alexschimpf/fastapi-versionizer/commit/e97d5f95eb6b8d006c03fff0bfbfd8136c1b2eec))
+
 ## [2.1.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.0.0...v2.1.0) (2023-10-03)
 
 
