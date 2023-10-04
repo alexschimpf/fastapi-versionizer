@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.1...v2.1.2) (2023-10-04)
+
+
+### Bug Fixes
+
+* Fixed issue where custom latest_prefix wasn't getting passed to callback correctly ([020d32b](https://github.com/alexschimpf/fastapi-versionizer/commit/020d32b13143c1a6d98b449fec17cf23d0d8ed86))
+
 ## [2.1.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.0...v2.1.1) (2023-10-03)
 
 
