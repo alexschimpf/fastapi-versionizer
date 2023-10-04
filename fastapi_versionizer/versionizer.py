@@ -26,7 +26,7 @@ def api_version(
 
     def decorator(func: CallableT) -> CallableT:
         func._api_version = (major, minor)  # type: ignore
-        if deprecate_in_major:
+        if deprecate_in_major is not None:
             func._deprecate_in_version = (deprecate_in_major, deprecate_in_minor)  # type: ignore
         if remove_in_major is not None:
             func._remove_in_version = (remove_in_major, remove_in_minor)  # type: ignore
@@ -63,8 +63,8 @@ class Versionizer:
             Default version used if a route is not annotated with @api_version.
         :param latest_prefix:
             If this is given, the routes in your latest version will be a given a separate prefix alias.
-            For example, if your latest version is 1, and you have routes: "GET /v1/a" and "POST /v1/b",
-            then "GET /latest/a" and "POST /latest/b" will also be added.
+            For example, if latest_prefix='latest', latest version is 1, and you have routes:
+            "GET /v1/a" and "POST /v1/b", then "GET /latest/a" and "POST /latest/b" will also be added.
         :param include_main_docs:
             If True, docs page(s) will be created at the root, with all versioned routes included
         :param include_main_openapi_route:
@@ -132,7 +132,7 @@ class Versionizer:
                 routes_by_key=routes_by_key
             )
             if self._callback:
-                self._callback(latest_router, version, '/latest')
+                self._callback(latest_router, version, self._latest_prefix)
             versioned_app.include_router(router=latest_router)
 
         if self._include_versions_route:
@@ -213,7 +213,7 @@ class Versionizer:
         version_str = f'v{self._semantic_version_format.format(major=version[0], minor=version[1])}'
         title = f'{self._app.title} - {version_str}'
 
-        if self._include_version_openapi_route and self._app.openapi_url:
+        if self._include_version_openapi_route and self._app.openapi_url is not None:
             @router.get(self._app.openapi_url, include_in_schema=False)
             async def get_openapi() -> Any:
                 return fastapi.openapi.utils.get_openapi(
@@ -222,7 +222,7 @@ class Versionizer:
                     routes=router.routes
                 )
 
-        if self._include_version_docs and self._app.docs_url and self._app.openapi_url:
+        if self._include_version_docs and self._app.docs_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.docs_url, include_in_schema=False)
             async def get_docs() -> HTMLResponse:
                 return get_swagger_ui_html(
@@ -231,7 +231,7 @@ class Versionizer:
                     swagger_ui_parameters=self._app.swagger_ui_parameters
                 )
 
-        if self._include_version_docs and self._app.redoc_url and self._app.openapi_url:
+        if self._include_version_docs and self._app.redoc_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.redoc_url, include_in_schema=False)
             async def get_redoc() -> HTMLResponse:
                 return get_redoc_html(
@@ -255,7 +255,7 @@ class Versionizer:
                     'version': version_str,
                 }
 
-                if self._include_version_openapi_route:
+                if self._include_version_openapi_route and versioned_app.openapi_url is not None:
                     version_model['openapi_url'] = f'{version_prefix}{versioned_app.openapi_url}'
 
                 if self._include_version_docs and versioned_app.docs_url is not None:
