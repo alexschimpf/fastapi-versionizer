@@ -2,7 +2,7 @@
 
 ## Credit
 This was inspired by [fastapi_versioning](https://github.com/DeanWay/fastapi-versioning).
-This project fixes some of the issues with `fastapi_versioning` and adds some additional features.
+This project addresses issues with `fastapi_versioning` and adds some additional features.
 
 ## Installation
 `pip install fastapi-versionizer`
@@ -13,7 +13,7 @@ You can find examples in the [examples](/examples) directory.
 ## Summary
 <b>FastAPI Versionizer</b> makes API versioning easy.
 
-Here's an example:
+Here is a simple (and rather contrived) example:
 
 ```python
 from typing import List
@@ -90,23 +90,32 @@ app, versions = Versionizer(
 ```
 
 This will generate the following endpoints:
-- GET /openapi.json
-- GET /docs
-- GET /v1/openapi.json
-- GET /v1/docs
-- GET /v1/status
-- GET /v1/users
-- POST /v1/users
-- GET /v2/openapi.json
-- GET /v2/docs
-- GET /v2/status
-- GET /v2/users
-- POST /v2/users
-- GET /latest/openapi.json
-- GET /latest/docs
-- GET /latest/status
-- GET /latest/users
-- POST /latest/users
+- <b>GET /openapi.json</b>
+  - OpenAPI schema with endpoints from all versions
+- <b>GET /docs</b>
+  - Swagger page with endpoints from all versions
+- <b>GET /v1/openapi.json</b>
+  - OpenAPI schema for v1 endpoints
+- <b>GET /v1/docs</b>
+  - Swagger page for v1 endpoints
+- <b>GET /v1/status</b>
+- <b>GET /v1/users</b>
+- <b>POST /v1/users</b>
+- <b>GET /v2/openapi.json</b>
+  - OpenAPI schema for v2 endpoints
+- <b>GET /v2/docs</b>
+  - Swagger page for v2 endpoints
+- <b>GET /v2/status</b>
+  - This gets carried on from v1, where it was introduced, but has the same implementation
+- <b>GET /v2/users</b>
+- <b>POST /v2/users</b>
+- <b>GET /latest/openapi.json</b>
+  - OpenAPI schema for latest (i.e. v2) endpoints
+- <b>GET /latest/docs</b>
+  - Swagger page for latest (i.e. v2) endpoints
+- <b>GET /latest/status</b>
+- <b>GET /latest/users</b>
+- <b>POST /latest/users</b>
 
 ## Details
 <b>FastAPI Versionizer</b> works by creating a new FastAPI app with versioned routes and proper docs pages.
@@ -116,7 +125,7 @@ You can also specify the first version when the route should be considered depre
 Each new version will include all routes from previous versions that have not been overridden or marked for removal.
 An APIRouter will be created for each version, with the URL prefix defined by the `prefix_format` parameter described below,
 
-## Parameters
+## Versionizer Parameters
 - <b>app</b>
   - The FastAPI you want to version
 - <b>prefix_format</b>
