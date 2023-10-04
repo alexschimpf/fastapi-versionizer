@@ -130,7 +130,7 @@ An APIRouter will be created for each version, with the URL prefix defined by th
   - Default version used if a route is not annotated with @api_version.
 - <b>latest_prefix</b>
   - If this is given, the routes in your latest version will be a given a separate prefix alias.
-  - For example, if your latest version is 1, and you have routes: "GET /v1/a" and "POST /v1/b", then "GET /latest/a" and "POST /latest/b" will also be added.
+  - For example, if latest_prefix='latest', latest version is 1, and you have routes: "GET /v1/a" and "POST /v1/b", then "GET /latest/a" and "POST /latest/b" will also be added.
 - <b>include_main_docs</b>
   - If True, docs page(s) will be created at the root, with all versioned routes included
 - <b>include_main_openapi_route</b>
