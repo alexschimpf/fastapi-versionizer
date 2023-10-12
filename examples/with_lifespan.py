@@ -2,6 +2,7 @@
 # flake8: noqa: A003
 
 from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 from fastapi import FastAPI, APIRouter
 
 from fastapi_versionizer.versionizer import Versionizer, api_version
@@ -16,7 +17,7 @@ class TestLifeSpan:
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
+async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     try:
         TestLifeSpan.init()
         yield
