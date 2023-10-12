@@ -216,28 +216,21 @@ class Versionizer:
         if self._include_version_openapi_route and self._app.openapi_url is not None:
             @router.get(self._app.openapi_url, include_in_schema=False)
             async def get_openapi() -> Any:
+                openapi_params: Dict[str, Any] = {
+                    'title': title,
+                    'version': version_str,
+                    'routes': router.routes,
+                    'description': self._app.description,
+                    'terms_of_service': self._app.terms_of_service,
+                    'contact': self._app.contact,
+                    'license_info': self._app.license_info
+                }
+
                 if hasattr(self._app, 'summary'):
-                    # summary is available since OpenAPI 3.1.0, FastAPI 0.99.0
-                    return fastapi.openapi.utils.get_openapi(
-                        title=title,
-                        version=version_str,
-                        summary=self._app.summary,
-                        description=self._app.description,
-                        routes=router.routes,
-                        terms_of_service=self._app.terms_of_service,
-                        contact=self._app.contact,
-                        license_info=self._app.license_info
-                    )
-                else:
-                    return fastapi.openapi.utils.get_openapi(
-                        title=title,
-                        version=version_str,
-                        description=self._app.description,
-                        routes=router.routes,
-                        terms_of_service=self._app.terms_of_service,
-                        contact=self._app.contact,
-                        license_info=self._app.license_info
-                    )
+                    # Available since OpenAPI 3.1.0, FastAPI 0.99.0
+                    openapi_params['summary'] = self._app.summary
+
+                return fastapi.openapi.utils.get_openapi(**openapi_params)
 
         if self._include_version_docs and self._app.docs_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.docs_url, include_in_schema=False)
