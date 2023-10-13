@@ -41,7 +41,9 @@ app = FastAPI(
     title='test',
     docs_url='/swagger',
     openapi_url='/api_schema.json',
-    redoc_url=None
+    redoc_url=None,
+    description='Simple example of FastAPI Versionizer.',
+    terms_of_service='https://github.com/alexschimpf/fastapi-versionizer'
 )
 users_router = APIRouter(
     prefix='/users',
