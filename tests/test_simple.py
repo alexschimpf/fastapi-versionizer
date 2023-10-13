@@ -141,6 +141,8 @@ class TestSimpleExample(TestCase):
                 'openapi': '3.1.0',
                 'info': {
                     'title': 'test',
+                    'description': 'Simple example of FastAPI Versionizer.',
+                    'termsOfService': 'https://github.com/alexschimpf/fastapi-versionizer',
                     'version': '0.1.0'
                 },
                 'paths': {
@@ -931,6 +933,8 @@ class TestSimpleExample(TestCase):
                 'openapi': '3.1.0',
                 'info': {
                     'title': 'test - v1',
+                    'description': 'Simple example of FastAPI Versionizer.',
+                    'termsOfService': 'https://github.com/alexschimpf/fastapi-versionizer',
                     'version': 'v1'
                 },
                 'paths': {
@@ -1269,6 +1273,8 @@ class TestSimpleExample(TestCase):
                 'openapi': '3.1.0',
                 'info': {
                     'title': 'test - v2',
+                    'description': 'Simple example of FastAPI Versionizer.',
+                    'termsOfService': 'https://github.com/alexschimpf/fastapi-versionizer',
                     'version': 'v2'
                 },
                 'paths': {
@@ -1569,6 +1575,8 @@ class TestSimpleExample(TestCase):
                 'openapi': '3.1.0',
                 'info': {
                     'title': 'test - v2',
+                    'description': 'Simple example of FastAPI Versionizer.',
+                    'termsOfService': 'https://github.com/alexschimpf/fastapi-versionizer',
                     'version': 'v2'
                 },
                 'paths': {
