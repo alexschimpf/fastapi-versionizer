@@ -325,7 +325,9 @@ class Versionizer:
         kwargs.pop('router')
         for _ in range(10000):
             try:
-                return app.__class__(**kwargs)
+                cloned_app = app.__class__(**kwargs)
+                cloned_app.router.lifespan_context = app.router.lifespan_context
+                return cloned_app
             except TypeError as e:
                 e_str = str(e)
                 key_start = e_str.index("'") + 1

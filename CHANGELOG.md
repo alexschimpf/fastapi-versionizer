@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.2...v2.1.3) (2023-10-13)
+
+
+### Bug Fixes
+
+* Fixed issue with lifespan support ([ee40d11](https://github.com/alexschimpf/fastapi-versionizer/commit/ee40d11cba743c07216370715a7fbcd23f0a145e))
+
 ## [2.1.2](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.1...v2.1.2) (2023-10-04)
 
 
