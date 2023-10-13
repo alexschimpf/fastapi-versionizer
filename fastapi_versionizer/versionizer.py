@@ -88,7 +88,6 @@ class Versionizer:
                 - Version path prefix
         """
         self._app = app
-        self._lifespan_context = app.router.lifespan_context
         self._prefix_format = prefix_format
         self._semantic_version_format = semantic_version_format
         self._default_version = default_version
@@ -141,8 +140,6 @@ class Versionizer:
 
         if not self._include_main_docs or not self._include_main_openapi_route:
             self._remove_docs_and_openapi(versioned_app=versioned_app)
-
-        versioned_app.router.lifespan_context = self._lifespan_context
 
         return versioned_app, versions
 
@@ -318,7 +315,9 @@ class Versionizer:
         kwargs.pop('router')
         for _ in range(10000):
             try:
-                return app.__class__(**kwargs)
+                cloned_app = app.__class__(**kwargs)
+                cloned_app.router.lifespan_context = app.router.lifespan_context
+                return cloned_app
             except TypeError as e:
                 e_str = str(e)
                 key_start = e_str.index("'") + 1
