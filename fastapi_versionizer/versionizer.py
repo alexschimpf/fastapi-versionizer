@@ -230,13 +230,16 @@ class Versionizer:
                     # Available since OpenAPI 3.1.0, FastAPI 0.99.0
                     openapi_params['summary'] = self._app.summary
 
+                if self._app.root_path != '':
+                    openapi_params['servers'] = [{'url': self._app.root_path.rstrip('/')}]
+
                 return fastapi.openapi.utils.get_openapi(**openapi_params)
 
         if self._include_version_docs and self._app.docs_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.docs_url, include_in_schema=False)
             async def get_docs() -> HTMLResponse:
                 return get_swagger_ui_html(
-                    openapi_url=f'{version_prefix}{self._app.openapi_url}',
+                    openapi_url=f'{self._app.root_path.rstrip("/")}{version_prefix}{self._app.openapi_url}',
                     title=title,
                     swagger_ui_parameters=self._app.swagger_ui_parameters
                 )
@@ -245,7 +248,7 @@ class Versionizer:
             @router.get(self._app.redoc_url, include_in_schema=False)
             async def get_redoc() -> HTMLResponse:
                 return get_redoc_html(
-                    openapi_url=f'{version_prefix}{self._app.openapi_url}',
+                    openapi_url=f'{self._app.root_path.rstrip("/")}{version_prefix}{self._app.openapi_url}',
                     title=title
                 )
 
@@ -266,13 +269,22 @@ class Versionizer:
                 }
 
                 if self._include_version_openapi_route and versioned_app.openapi_url is not None:
-                    version_model['openapi_url'] = f'{version_prefix}{versioned_app.openapi_url}'
+                    version_model['openapi_url'] = (
+                        f'{self._app.root_path.rstrip("/")}'
+                        f'{version_prefix}{versioned_app.openapi_url}'
+                    )
 
                 if self._include_version_docs and versioned_app.docs_url is not None:
-                    version_model['swagger_url'] = f'{version_prefix}{versioned_app.docs_url}'
+                    version_model['swagger_url'] = (
+                        f'{self._app.root_path.rstrip("/")}'
+                        f'{version_prefix}{versioned_app.docs_url}'
+                    )
 
                 if self._include_version_docs and versioned_app.redoc_url is not None:
-                    version_model['redoc_url'] = f'{version_prefix}{versioned_app.redoc_url}'
+                    version_model['redoc_url'] = (
+                        f'{self._app.root_path.rstrip("/")}'
+                        f'{version_prefix}{versioned_app.redoc_url}'
+                    )
 
                 version_models.append(version_model)
 
