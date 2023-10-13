@@ -1,3 +1,10 @@
+## [2.1.4](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.3...v2.1.4) (2023-10-13)
+
+
+### Bug Fixes
+
+* Fixed issue with OpenAPI metadata not showing up for versioned doc pages ([87093b9](https://github.com/alexschimpf/fastapi-versionizer/commit/87093b95766efa0bbc49777fae75efc55e489747))
+
 ## [2.1.3](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.2...v2.1.3) (2023-10-13)
 
 
