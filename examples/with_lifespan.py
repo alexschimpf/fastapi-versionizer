@@ -2,8 +2,9 @@
 # flake8: noqa: A003
 
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
-from fastapi import FastAPI, APIRouter
+import time
+from typing import AsyncGenerator, Awaitable, Callable
+from fastapi import FastAPI, APIRouter, Request, Response
 
 from fastapi_versionizer.versionizer import Versionizer, api_version
 
@@ -37,6 +38,15 @@ status_router = APIRouter(
     tags=['Status']
 )
 
+@app.middleware('http')
+async def add_process_time_header(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers['X-Process-Time'] = str(process_time)
+    return response
 
 @api_version(1)
 @status_router.get('', deprecated=True)
