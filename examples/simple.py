@@ -133,7 +133,7 @@ def create_item_v2(item: ItemV2) -> ItemV2:
 app.include_router(users_router)
 app.include_router(items_router)
 
-app, versions = Versionizer(
+versions = Versionizer(
     app=app,
     prefix_format='/v{major}',
     semantic_version_format='{major}',

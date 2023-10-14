@@ -83,7 +83,7 @@ def callback(router: APIRouter, version: Tuple[int, int], version_prefix: str) -
         )
 
 
-app, versions = Versionizer(
+versions = Versionizer(
     app=app,
     prefix_format='/v{major}_{minor}',
     semantic_version_format='{major}.{minor}',

@@ -66,7 +66,7 @@ def get_v2_status() -> str:
 
 app.include_router(status_router)
 
-app, versions = Versionizer(
+versions = Versionizer(
     app=app,
     prefix_format='/v{major}',
     semantic_version_format='{major}',
