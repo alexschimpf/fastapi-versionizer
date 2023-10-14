@@ -88,6 +88,7 @@ class Versionizer:
                 - Version path prefix
         """
         self._app = app
+        self._original_app_routes = app.routes
         self._prefix_format = prefix_format
         self._semantic_version_format = semantic_version_format
         self._default_version = default_version
@@ -100,15 +101,14 @@ class Versionizer:
         self._sort_routes = sort_routes
         self._callback = callback
 
-    def versionize(self) -> Tuple[FastAPI, List[Tuple[int, int]]]:
-        """
-        Versions your FastAPI application.
+        self._strip_routes()
 
-        :returns:
-            A tuple containing a new versioned FastAPI app and the list of all versions
+    def versionize(self) -> List[Tuple[int, int]]:
         """
+        Versions your FastAPI application, in place.
 
-        versioned_app = self._clone_app(app=self._app)
+        :returns: list of all versions (each in tuple form)
+        """
 
         version, routes_by_key = None, None
         routes_by_version = self._get_routes_by_version()
@@ -123,7 +123,7 @@ class Versionizer:
             )
             if self._callback:
                 self._callback(version_router, version, version_prefix)
-            versioned_app.include_router(router=version_router)
+            self._app.include_router(router=version_router)
 
         if self._latest_prefix is not None and routes_by_key and version:
             latest_router = self._build_version_router(
@@ -133,15 +133,12 @@ class Versionizer:
             )
             if self._callback:
                 self._callback(latest_router, version, self._latest_prefix)
-            versioned_app.include_router(router=latest_router)
+            self._app.include_router(router=latest_router)
 
         if self._include_versions_route:
-            self._add_versions_route(versioned_app=versioned_app, versions=versions)
+            self._add_versions_route(versions=versions)
 
-        if not self._include_main_docs or not self._include_main_openapi_route:
-            self._remove_docs_and_openapi(versioned_app=versioned_app)
-
-        return versioned_app, versions
+        return versions
 
     def _build_version_router(
         self,
@@ -166,13 +163,13 @@ class Versionizer:
 
     def _get_routes_by_version(self) -> Dict[Tuple[int, int], Dict[Tuple[str, str], APIRoute]]:
         routes_by_start_version: Dict[Tuple[int, int], List[APIRoute]] = defaultdict(list)
-        for route in self._app.routes:
+        for route in self._original_app_routes:
             if isinstance(route, APIRoute):
                 version = getattr(route.endpoint, '_api_version', self._default_version)
                 routes_by_start_version[version].append(route)
 
         routes_by_end_version: Dict[Tuple[int, int], List[APIRoute]] = defaultdict(list)
-        for route in self._app.routes:
+        for route in self._original_app_routes:
             if isinstance(route, APIRoute):
                 version = getattr(route.endpoint, '_remove_in_version', None)
                 if version:
@@ -249,8 +246,8 @@ class Versionizer:
                     title=title
                 )
 
-    def _add_versions_route(self, versioned_app: FastAPI, versions: List[Tuple[int, int]]) -> None:
-        @versioned_app.get(
+    def _add_versions_route(self, versions: List[Tuple[int, int]]) -> None:
+        @self._app.get(
             '/versions',
             tags=['Versions'],
             response_class=JSONResponse
@@ -265,31 +262,20 @@ class Versionizer:
                     'version': version_str,
                 }
 
-                if self._include_version_openapi_route and versioned_app.openapi_url is not None:
-                    version_model['openapi_url'] = f'{version_prefix}{versioned_app.openapi_url}'
+                if self._include_version_openapi_route and self._app.openapi_url is not None:
+                    version_model['openapi_url'] = f'{version_prefix}{self._app.openapi_url}'
 
-                if self._include_version_docs and versioned_app.docs_url is not None:
-                    version_model['swagger_url'] = f'{version_prefix}{versioned_app.docs_url}'
+                if self._include_version_docs and self._app.docs_url is not None:
+                    version_model['swagger_url'] = f'{version_prefix}{self._app.docs_url}'
 
-                if self._include_version_docs and versioned_app.redoc_url is not None:
-                    version_model['redoc_url'] = f'{version_prefix}{versioned_app.redoc_url}'
+                if self._include_version_docs and self._app.redoc_url is not None:
+                    version_model['redoc_url'] = f'{version_prefix}{self._app.redoc_url}'
 
                 version_models.append(version_model)
 
             return {
                 'versions': version_models
             }
-
-    def _remove_docs_and_openapi(self, versioned_app: FastAPI) -> None:
-        paths_to_remove = []
-        if not self._include_main_docs:
-            paths_to_remove.extend([versioned_app.docs_url, versioned_app.redoc_url])
-        if not self._include_main_openapi_route:
-            paths_to_remove.append(versioned_app.openapi_url)
-        versioned_app.router.routes = [
-            route for route in versioned_app.routes if
-            getattr(route, 'path') not in paths_to_remove
-        ]
 
     @staticmethod
     def _add_route_to_router(
@@ -319,20 +305,14 @@ class Versionizer:
 
         raise Exception('Failed to add route')
 
-    @staticmethod
-    def _clone_app(app: FastAPI) -> FastAPI:
-        kwargs = dict(app.__dict__)
-        kwargs.pop('router')
-        for _ in range(10000):
-            try:
-                cloned_app = app.__class__(**kwargs)
-                cloned_app.router.lifespan_context = app.router.lifespan_context
-                cloned_app.user_middleware = app.user_middleware
-                return cloned_app
-            except TypeError as e:
-                e_str = str(e)
-                key_start = e_str.index("'") + 1
-                key_end = e_str.rindex("'")
-                kwargs.pop(e_str[key_start:key_end])
+    def _strip_routes(self) -> None:
+        paths_to_keep = []
+        if self._include_main_docs:
+            paths_to_keep.extend([self._app.docs_url, self._app.redoc_url])
+        if self._include_main_openapi_route:
+            paths_to_keep.append(self._app.openapi_url)
 
-        raise Exception('Failed to clone app')
+        self._app.router.routes = [
+            route for route in self._app.routes if
+            getattr(route, 'path') in paths_to_keep
+        ]
