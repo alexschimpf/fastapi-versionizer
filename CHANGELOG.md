@@ -1,3 +1,10 @@
+## [3.0.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.5...v3.0.0) (2023-10-14)
+
+
+### Breaking Changes
+
+* Versionizer now versions a FastAPI app in place ([8217e80](https://github.com/alexschimpf/fastapi-versionizer/commit/8217e80b3925a7d30ef77e6eb8693b271fe02247))
+
 ## [2.1.5](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.4...v2.1.5) (2023-10-14)
 
 
