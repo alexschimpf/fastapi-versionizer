@@ -327,6 +327,7 @@ class Versionizer:
             try:
                 cloned_app = app.__class__(**kwargs)
                 cloned_app.router.lifespan_context = app.router.lifespan_context
+                cloned_app.user_middleware = app.user_middleware
                 return cloned_app
             except TypeError as e:
                 e_str = str(e)
