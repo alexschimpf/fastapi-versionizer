@@ -24,7 +24,7 @@ def get_status_v2() -> str:
     return 'Okv2'
 
 
-app, versions = Versionizer(
+versions = Versionizer(
     app=app,
     prefix_format='/v{major}',
     semantic_version_format='{major}',
