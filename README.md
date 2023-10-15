@@ -80,7 +80,7 @@ def create_user_v2(user: UserV2) -> UserV2:
 
 app.include_router(users_router)
 
-app, versions = Versionizer(
+versions = Versionizer(
     app=app,
     prefix_format='/v{major}',
     semantic_version_format='{major}',
@@ -118,7 +118,7 @@ This will generate the following endpoints:
 - <b>POST /latest/users</b>
 
 ## Details
-<b>FastAPI Versionizer</b> works by creating a new FastAPI app with versioned routes and proper docs pages.
+<b>FastAPI Versionizer</b> works by modifying a FastAPI app in place, adding versioned routes and proper docs pages.
 Routes are annotated with version information, using the `@api_version` decorator.
 Using this decorator, you can specify the version (major and/or minor) that the route was introduced.
 You can also specify the first version when the route should be considered deprecated or even removed.

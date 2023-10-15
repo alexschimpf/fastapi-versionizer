@@ -33,3 +33,9 @@ class TestWithLifespanExample(TestCase):
             # status route
             self.assertEqual(200, test_client.get('/v1/status').status_code)
             self.assertEqual(200, test_client.get('/v2/status').status_code)
+
+            # test middleware
+            self.assertIsNotNone(
+                test_client.get('/v1/status').headers.get('X-Process-Time'),
+                'Middleware not working'
+            )
