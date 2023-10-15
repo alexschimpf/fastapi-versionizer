@@ -224,15 +224,13 @@ class Versionizer:
                     'description': self._app.description,
                     'terms_of_service': self._app.terms_of_service,
                     'contact': self._app.contact,
-                    'license_info': self._app.license_info
+                    'license_info': self._app.license_info,
+                    'servers': self._app.servers
                 }
 
                 if hasattr(self._app, 'summary'):
                     # Available since OpenAPI 3.1.0, FastAPI 0.99.0
                     openapi_params['summary'] = self._app.summary
-
-                if self._app.root_path:
-                    openapi_params['servers'] = [{'url': self._app.root_path.rstrip('/')}]
 
                 return fastapi.openapi.utils.get_openapi(**openapi_params)
 

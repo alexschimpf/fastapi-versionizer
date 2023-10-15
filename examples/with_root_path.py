@@ -7,8 +7,9 @@ app = FastAPI(
     title='test',
     docs_url='/swagger',
     root_path='/api',
+    root_path_in_servers=True,
     openapi_url='/api_schema.json',
-    redoc_url=None,
+    redoc_url=None
 )
 
 
