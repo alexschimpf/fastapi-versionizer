@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.0...v3.0.1) (2023-10-17)
+
+
+### Bug Fixes
+
+* Fixed issue with root_path/servers in versioned doc pages ([a82a343](https://github.com/alexschimpf/fastapi-versionizer/commit/a82a343de350b7a323a8a46b023b1dc897c1302b))
+
 ## [3.0.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v2.1.5...v3.0.0) (2023-10-14)
 
 
