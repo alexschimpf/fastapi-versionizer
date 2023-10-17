@@ -6,7 +6,7 @@ import fastapi.openapi.utils
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.routing import APIRoute
 from natsort import natsorted
-from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union, cast
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 
@@ -140,6 +140,10 @@ class Versionizer:
 
         return versions
 
+    def _build_api_url(self, version_prefix: str, path: str) -> str:
+        root_path = (self._app.root_path or '').rstrip('/')
+        return f'{root_path}{version_prefix}{path}'
+
     def _build_version_router(
         self,
         version: Tuple[int, int],
@@ -220,7 +224,8 @@ class Versionizer:
                     'description': self._app.description,
                     'terms_of_service': self._app.terms_of_service,
                     'contact': self._app.contact,
-                    'license_info': self._app.license_info
+                    'license_info': self._app.license_info,
+                    'servers': self._app.servers
                 }
 
                 if hasattr(self._app, 'summary'):
@@ -232,8 +237,9 @@ class Versionizer:
         if self._include_version_docs and self._app.docs_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.docs_url, include_in_schema=False)
             async def get_docs() -> HTMLResponse:
+                openapi_url = self._build_api_url(version_prefix, cast(str, self._app.openapi_url))
                 return get_swagger_ui_html(
-                    openapi_url=f'{version_prefix}{self._app.openapi_url}',
+                    openapi_url=openapi_url,
                     title=title,
                     swagger_ui_parameters=self._app.swagger_ui_parameters
                 )
@@ -241,8 +247,9 @@ class Versionizer:
         if self._include_version_docs and self._app.redoc_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.redoc_url, include_in_schema=False)
             async def get_redoc() -> HTMLResponse:
+                openapi_url = self._build_api_url(version_prefix, cast(str, self._app.openapi_url))
                 return get_redoc_html(
-                    openapi_url=f'{version_prefix}{self._app.openapi_url}',
+                    openapi_url=openapi_url,
                     title=title
                 )
 
@@ -263,13 +270,13 @@ class Versionizer:
                 }
 
                 if self._include_version_openapi_route and self._app.openapi_url is not None:
-                    version_model['openapi_url'] = f'{version_prefix}{self._app.openapi_url}'
+                    version_model['openapi_url'] = self._build_api_url(version_prefix, self._app.openapi_url)
 
                 if self._include_version_docs and self._app.docs_url is not None:
-                    version_model['swagger_url'] = f'{version_prefix}{self._app.docs_url}'
+                    version_model['swagger_url'] = self._build_api_url(version_prefix, self._app.docs_url)
 
                 if self._include_version_docs and self._app.redoc_url is not None:
-                    version_model['redoc_url'] = f'{version_prefix}{self._app.redoc_url}'
+                    version_model['redoc_url'] = self._build_api_url(version_prefix, self._app.redoc_url)
 
                 version_models.append(version_model)
 
