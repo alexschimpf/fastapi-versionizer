@@ -1,5 +1,4 @@
-from typing import Annotated
-
+from typing_extensions import Annotated
 from fastapi import FastAPI, APIRouter, Depends
 from fastapi_versionizer import Versionizer
 from fastapi.openapi.models import OAuthFlowImplicit, OAuthFlows
