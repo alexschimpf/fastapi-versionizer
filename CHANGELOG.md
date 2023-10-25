@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.1...v3.0.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* Fixed OAuth issue for versioned Swagger pages ([94b7a37](https://github.com/alexschimpf/fastapi-versionizer/commit/94b7a37de66a3fe5304d26460371788f38c308ef))
+
 ## [3.0.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.0...v3.0.1) (2023-10-17)
 
 
