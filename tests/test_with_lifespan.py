@@ -6,6 +6,9 @@ from examples.with_lifespan import app, versions
 
 class TestWithLifespanExample(TestCase):
 
+    def setUp(self) -> None:
+        self.maxDiff = None
+
     def test_with_lifespan_example(self) -> None:
         with TestClient(app) as test_client:
 

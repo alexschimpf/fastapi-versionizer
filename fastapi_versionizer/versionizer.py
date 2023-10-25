@@ -241,7 +241,9 @@ class Versionizer:
                 return get_swagger_ui_html(
                     openapi_url=openapi_url,
                     title=title,
-                    swagger_ui_parameters=self._app.swagger_ui_parameters
+                    swagger_ui_parameters=self._app.swagger_ui_parameters,
+                    init_oauth=self._app.swagger_ui_init_oauth,
+                    oauth2_redirect_url=self._app.swagger_ui_oauth2_redirect_url
                 )
 
         if self._include_version_docs and self._app.redoc_url is not None and self._app.openapi_url is not None:

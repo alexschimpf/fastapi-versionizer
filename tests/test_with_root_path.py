@@ -6,6 +6,9 @@ from examples.with_root_path import app, versions
 
 class TestWitRootPathExample(TestCase):
 
+    def setUp(self) -> None:
+        self.maxDiff = None
+
     def test_with_root_path_example(self) -> None:
         test_client = TestClient(app)
 
