@@ -4,7 +4,7 @@ from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.docs import get_swagger_ui_html
 import fastapi.openapi.utils
 from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.routing import APIRoute
+from fastapi.routing import APIRoute, APIWebSocketRoute
 from natsort import natsorted
 from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union, cast
 
@@ -148,7 +148,7 @@ class Versionizer:
         self,
         version: Tuple[int, int],
         version_prefix: str,
-        routes_by_key: Dict[Tuple[str, str], APIRoute]
+        routes_by_key: Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]
     ) -> APIRouter:
         router = APIRouter(
             prefix=version_prefix
@@ -165,23 +165,25 @@ class Versionizer:
 
         return router
 
-    def _get_routes_by_version(self) -> Dict[Tuple[int, int], Dict[Tuple[str, str], APIRoute]]:
-        routes_by_start_version: Dict[Tuple[int, int], List[APIRoute]] = defaultdict(list)
+    def _get_routes_by_version(
+        self
+    ) -> Dict[Tuple[int, int], Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]]:
+        routes_by_start_version: Dict[Tuple[int, int], List[Union[APIRoute, APIWebSocketRoute]]] = defaultdict(list)
         for route in self._original_app_routes:
-            if isinstance(route, APIRoute):
+            if isinstance(route, (APIRoute, APIWebSocketRoute)):
                 version = getattr(route.endpoint, '_api_version', self._default_version)
                 routes_by_start_version[version].append(route)
 
-        routes_by_end_version: Dict[Tuple[int, int], List[APIRoute]] = defaultdict(list)
+        routes_by_end_version: Dict[Tuple[int, int], List[Union[APIRoute, APIWebSocketRoute]]] = defaultdict(list)
         for route in self._original_app_routes:
-            if isinstance(route, APIRoute):
+            if isinstance(route, (APIRoute, APIWebSocketRoute)):
                 version = getattr(route.endpoint, '_remove_in_version', None)
                 if version:
                     routes_by_end_version[version].append(route)
 
         versions = sorted(set(routes_by_start_version.keys()))
-        routes_by_version: Dict[Tuple[int, int], Dict[Tuple[str, str], APIRoute]] = {}
-        curr_version_routes_by_key: Dict[Tuple[str, str], APIRoute] = {}
+        routes_by_version: Dict[Tuple[int, int], Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]] = {}
+        curr_version_routes_by_key: Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]] = {}
         for version in versions:
             for route in routes_by_start_version[version]:
                 route_keys = self._get_route_keys(route=route)
@@ -197,11 +199,16 @@ class Versionizer:
         return routes_by_version
 
     @classmethod
-    def _get_route_keys(cls, route: APIRoute) -> Dict[Tuple[str, str], APIRoute]:
-        routes_by_key = {}
+    def _get_route_keys(
+        cls,
+        route: Union[APIRoute, APIWebSocketRoute]
+    ) -> Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]:
+        routes_by_key: Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]] = {}
         if isinstance(route, APIRoute):
             for method in route.methods:
                 routes_by_key[(route.path, method)] = route
+        elif isinstance(route, APIWebSocketRoute):
+            routes_by_key[(route.path, '')] = route
 
         return routes_by_key
 
@@ -288,7 +295,7 @@ class Versionizer:
 
     @staticmethod
     def _add_route_to_router(
-        route: APIRoute,
+        route: Union[APIRoute, APIWebSocketRoute],
         router: APIRouter,
         version: Tuple[int, int]
     ) -> None:
@@ -305,7 +312,10 @@ class Versionizer:
 
         for _ in range(10000):
             try:
-                return router.add_api_route(**kwargs)
+                if isinstance(route, APIRoute):
+                    return router.add_api_route(**kwargs)
+                elif isinstance(route, APIWebSocketRoute):
+                    return router.add_api_websocket_route(**kwargs)
             except TypeError as e:
                 e_str = str(e)
                 key_start = e_str.index("'") + 1
