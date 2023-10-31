@@ -7,7 +7,7 @@ import fastapi.openapi.utils
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.routing import APIRoute
 from natsort import natsorted
-from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union, cast
+from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union, cast, Set
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 
@@ -214,15 +214,14 @@ class Versionizer:
     ) -> None:
         version_str = f'v{self._semantic_version_format.format(major=version[0], minor=version[1])}'
         title = f'{self._app.title} - {version_str}'
-        tags: set[str | Enum] = set()
-        versioned_tags: list[Dict[str, Any]] = []
+        tags: Set[Union[str, Enum]] = set()
+        versioned_tags: List[Dict[str, Any]] = []
 
         if self._app.openapi_tags is not None:
             for route in router.routes:
                 if isinstance(route, APIRoute):
                     if isinstance(route.tags, list):
-                        for tag in route.tags:
-                            tags.add(tag)
+                        tags.update(route.tags or ())
 
             if tags:
                 openapi_tags = self._app.openapi_tags or []
