@@ -1,4 +1,5 @@
 from collections import defaultdict
+from enum import Enum
 from fastapi import FastAPI, APIRouter
 from fastapi.openapi.docs import get_redoc_html
 from fastapi.openapi.docs import get_swagger_ui_html
@@ -6,7 +7,7 @@ import fastapi.openapi.utils
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.routing import APIRoute
 from natsort import natsorted
-from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union, cast
+from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union, cast, Set
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 
@@ -213,6 +214,20 @@ class Versionizer:
     ) -> None:
         version_str = f'v{self._semantic_version_format.format(major=version[0], minor=version[1])}'
         title = f'{self._app.title} - {version_str}'
+        tags: Set[Union[str, Enum]] = set()
+        versioned_tags: List[Dict[str, Any]] = []
+
+        if self._app.openapi_tags is not None:
+            for route in router.routes:
+                if isinstance(route, APIRoute):
+                    if isinstance(route.tags, list):
+                        tags.update(route.tags or ())
+
+            if tags:
+                openapi_tags = self._app.openapi_tags or []
+                for openapi_tag in openapi_tags:
+                    if openapi_tag['name'] in tags:
+                        versioned_tags.append(openapi_tag)
 
         if self._include_version_openapi_route and self._app.openapi_url is not None:
             @router.get(self._app.openapi_url, include_in_schema=False)
@@ -225,7 +240,8 @@ class Versionizer:
                     'terms_of_service': self._app.terms_of_service,
                     'contact': self._app.contact,
                     'license_info': self._app.license_info,
-                    'servers': self._app.servers
+                    'servers': self._app.servers,
+                    'tags': versioned_tags,
                 }
 
                 if hasattr(self._app, 'summary'):
