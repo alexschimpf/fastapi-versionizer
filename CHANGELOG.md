@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.2...v3.0.3) (2023-11-02)
+
+
+### Bug Fixes
+
+* Fixed issue with OpenAPI tags for versioned docs ([dbc434c](https://github.com/alexschimpf/fastapi-versionizer/commit/dbc434c85170cbc1802ff167e33c8ab4204d64d3))
+
 ## [3.0.2](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.1...v3.0.2) (2023-10-25)
 
 
