@@ -1,3 +1,10 @@
+## [3.0.4](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.3...v3.0.4) (2023-11-03)
+
+
+### Bug Fixes
+
+* Added Websocket support back ([211a66e](https://github.com/alexschimpf/fastapi-versionizer/commit/211a66e8aac56dbf2d5ffc94d6c65959044ca5dd))
+
 ## [3.0.3](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.2...v3.0.3) (2023-11-02)
 
 
