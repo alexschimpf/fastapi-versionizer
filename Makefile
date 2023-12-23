@@ -54,6 +54,10 @@ install-dev:
 install-pre-commit:
 	pre-commit install --hook-type commit-msg
 
+# uninstall pre-commit
+uninstall-pre-commit:
+	pre-commit uninstall
+
 # check dependency vulnerabilities
 check-vulnerabilities:
 	safety check --full-report --file requirements.txt

@@ -7,6 +7,7 @@ import fastapi.openapi.utils
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from natsort import natsorted
+from starlette.routing import Route
 from typing import Any, Callable, Dict, List, Tuple, TypeVar, Union, cast, Set
 
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
@@ -141,15 +142,11 @@ class Versionizer:
 
         return versions
 
-    def _build_api_url(self, version_prefix: str, path: str) -> str:
-        root_path = (self._app.root_path or '').rstrip('/')
-        return f'{root_path}{version_prefix}{path}'
-
     def _build_version_router(
         self,
         version: Tuple[int, int],
         version_prefix: str,
-        routes_by_key: Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]
+        routes_by_key: Dict[Tuple[str, str], Route]
     ) -> APIRouter:
         router = APIRouter(
             prefix=version_prefix
@@ -168,23 +165,28 @@ class Versionizer:
 
     def _get_routes_by_version(
         self
-    ) -> Dict[Tuple[int, int], Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]]:
-        routes_by_start_version: Dict[Tuple[int, int], List[Union[APIRoute, APIWebSocketRoute]]] = defaultdict(list)
+    ) -> Dict[Tuple[int, int], Dict[Tuple[str, str], Route]]:
+        # These routes will be custom-built later for each version
+        ignored_route_paths = {
+            self._app.docs_url, self._app.redoc_url, self._app.openapi_url
+        }
+
+        routes_by_start_version: Dict[Tuple[int, int], List[Route]] = defaultdict(list)
         for route in self._original_app_routes:
-            if isinstance(route, (APIRoute, APIWebSocketRoute)):
+            if isinstance(route, (Route, APIRoute, APIWebSocketRoute)) and route.path not in ignored_route_paths:
                 version = getattr(route.endpoint, '_api_version', self._default_version)
                 routes_by_start_version[version].append(route)
 
-        routes_by_end_version: Dict[Tuple[int, int], List[Union[APIRoute, APIWebSocketRoute]]] = defaultdict(list)
+        routes_by_end_version: Dict[Tuple[int, int], List[Route]] = defaultdict(list)
         for route in self._original_app_routes:
-            if isinstance(route, (APIRoute, APIWebSocketRoute)):
+            if isinstance(route, (Route, APIRoute, APIWebSocketRoute)) and route.path not in ignored_route_paths:
                 version = getattr(route.endpoint, '_remove_in_version', None)
                 if version:
                     routes_by_end_version[version].append(route)
 
         versions = sorted(set(routes_by_start_version.keys()))
-        routes_by_version: Dict[Tuple[int, int], Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]] = {}
-        curr_version_routes_by_key: Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]] = {}
+        routes_by_version: Dict[Tuple[int, int], Dict[Tuple[str, str], Route]] = {}
+        curr_version_routes_by_key: Dict[Tuple[str, str], Route] = {}
         for version in versions:
             for route in routes_by_start_version[version]:
                 route_keys = self._get_route_keys(route=route)
@@ -202,10 +204,10 @@ class Versionizer:
     @classmethod
     def _get_route_keys(
         cls,
-        route: Union[APIRoute, APIWebSocketRoute]
-    ) -> Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]]:
-        routes_by_key: Dict[Tuple[str, str], Union[APIRoute, APIWebSocketRoute]] = {}
-        if isinstance(route, APIRoute):
+        route: Route
+    ) -> Dict[Tuple[str, str], Route]:
+        routes_by_key: Dict[Tuple[str, str], Route] = {}
+        if isinstance(route, (Route, APIRoute)):
             for method in route.methods:
                 routes_by_key[(route.path, method)] = route
         elif isinstance(route, APIWebSocketRoute):
@@ -261,12 +263,14 @@ class Versionizer:
             @router.get(self._app.docs_url, include_in_schema=False)
             async def get_docs() -> HTMLResponse:
                 openapi_url = self._build_api_url(version_prefix, cast(str, self._app.openapi_url))
+                swagger_ui_oauth2_redirect_url = self._build_api_url(
+                    version_prefix, cast(str, self._app.swagger_ui_oauth2_redirect_url))
                 return get_swagger_ui_html(
                     openapi_url=openapi_url,
                     title=title,
                     swagger_ui_parameters=self._app.swagger_ui_parameters,
                     init_oauth=self._app.swagger_ui_init_oauth,
-                    oauth2_redirect_url=self._app.swagger_ui_oauth2_redirect_url
+                    oauth2_redirect_url=swagger_ui_oauth2_redirect_url
                 )
 
         if self._include_version_docs and self._app.redoc_url is not None and self._app.openapi_url is not None:
@@ -311,7 +315,7 @@ class Versionizer:
 
     @staticmethod
     def _add_route_to_router(
-        route: Union[APIRoute, APIWebSocketRoute],
+        route: Route,
         router: APIRouter,
         version: Tuple[int, int]
     ) -> None:
@@ -326,9 +330,9 @@ class Versionizer:
             ):
                 kwargs['deprecated'] = True
 
-        for _ in range(10000):
+        for _ in range(len(kwargs)):
             try:
-                if isinstance(route, APIRoute):
+                if isinstance(route, (Route, APIRoute)):
                     return router.add_api_route(**kwargs)
                 elif isinstance(route, APIWebSocketRoute):
                     return router.add_api_websocket_route(**kwargs)
@@ -342,6 +346,8 @@ class Versionizer:
 
     def _strip_routes(self) -> None:
         paths_to_keep = []
+        if self._app.swagger_ui_oauth2_redirect_url:
+            paths_to_keep.append(self._app.swagger_ui_oauth2_redirect_url)
         if self._include_main_docs:
             paths_to_keep.extend([self._app.docs_url, self._app.redoc_url])
         if self._include_main_openapi_route:
@@ -351,3 +357,7 @@ class Versionizer:
             route for route in self._app.routes if
             getattr(route, 'path') in paths_to_keep
         ]
+
+    def _build_api_url(self, version_prefix: str, path: str) -> str:
+        root_path = (self._app.root_path or '').rstrip('/')
+        return f'{root_path}{version_prefix}{path}'
