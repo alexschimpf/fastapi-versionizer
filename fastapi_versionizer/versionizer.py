@@ -258,7 +258,7 @@ class Versionizer:
                 return fastapi.openapi.utils.get_openapi(**openapi_params)
 
         if self._include_version_docs and self._app.docs_url is not None and self._app.openapi_url is not None:
-            openapi_url = self._build_api_url(version_prefix, cast(str, self._app.openapi_url))
+            openapi_url = self._build_api_url(version_prefix, self._app.openapi_url)
             oauth2_redirect_url = self._build_api_url(
                 version_prefix, cast(str, self._app.swagger_ui_oauth2_redirect_url))
 
@@ -272,9 +272,10 @@ class Versionizer:
                     oauth2_redirect_url=oauth2_redirect_url
                 )
 
-            @router.get(self._app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
-            async def get_oauth2_redirect() -> HTMLResponse:
-                return get_swagger_ui_oauth2_redirect_html()
+            if self._app.swagger_ui_oauth2_redirect_url:
+                @router.get(self._app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+                async def get_oauth2_redirect() -> HTMLResponse:
+                    return get_swagger_ui_oauth2_redirect_html()
 
         if self._include_version_docs and self._app.redoc_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.redoc_url, include_in_schema=False)
