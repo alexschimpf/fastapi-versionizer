@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
 from unittest import TestCase
-from examples.simple import app, versions
+from examples.simple import app, counter_db, versions
 
 
 class TestSimpleExample(TestCase):
@@ -29,6 +29,8 @@ class TestSimpleExample(TestCase):
         self.assertEqual(404, test_client.get('/v1/versions').status_code)
         self.assertEqual(404, test_client.get('/v2/versions').status_code)
         self.assertEqual(404, test_client.get('/latest/versions').status_code)
+
+        self.assertEqual(0, counter_db.counter)
 
         # versions route
         self.assertDictEqual(
@@ -128,6 +130,8 @@ class TestSimpleExample(TestCase):
             {'id': 3, 'name': 'dan', 'age': 65},
             test_client.get('/latest/users/3').json()
         )
+
+        self.assertEqual(9, counter_db.counter)
 
         # docs
         self.assertEqual(200, test_client.get('/swagger').status_code)
