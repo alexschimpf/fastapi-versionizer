@@ -1,8 +1,9 @@
 # mypy: disable-error-code="no-any-return"
 # flake8: noqa: A003
 
-from typing import List, Any, Dict
-from fastapi import FastAPI, APIRouter
+from typing import Any, Callable, Coroutine, Dict, List
+from fastapi import APIRouter, FastAPI, Request, Response
+from fastapi.routing import APIRoute
 from pydantic import BaseModel
 
 from fastapi_versionizer.versionizer import Versionizer, api_version
@@ -36,6 +37,25 @@ class DB:
         self.items: Dict[int, Any] = {}
 
 
+class CounterDb:
+    def __init__(self) -> None:
+        self.counter = 0
+
+    def increment(self) -> None:
+        self.counter += 1
+
+counter_db = CounterDb()
+
+class CounterRoute(APIRoute):
+    def get_route_handler(self) -> Callable[[Request], Coroutine[Any, Any, Response]]:
+        original_route_handler = super().get_route_handler()
+
+        async def custom_route_handler(request: Request) -> Response:
+            counter_db.increment()
+            return await original_route_handler(request)
+
+        return custom_route_handler
+
 db = DB()
 app = FastAPI(
     title='test',
@@ -47,7 +67,8 @@ app = FastAPI(
 )
 users_router = APIRouter(
     prefix='/users',
-    tags=['Users']
+    tags=['Users'],
+    route_class=CounterRoute,
 )
 items_router = APIRouter(
     prefix='/items',
