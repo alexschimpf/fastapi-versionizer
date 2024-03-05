@@ -147,7 +147,7 @@ class TestWitRootPathExample(TestCase):
                     }
                 }
             },
-            test_client.get('/api_schema.json').json()
+            test_client.get('/api/api_schema.json').json()
         )
         self.assertDictEqual(
             {
