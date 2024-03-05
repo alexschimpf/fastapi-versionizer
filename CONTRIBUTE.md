@@ -29,7 +29,7 @@
 ## Local Development
 
 ### Installation
-1. Install python >=3.7
+1. Install python >=3.8
 2. Create a python virtual environment
 3. Install python dependencies
 ```shell
