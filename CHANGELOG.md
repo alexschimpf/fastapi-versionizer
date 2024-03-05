@@ -1,3 +1,10 @@
+## [4.0.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.4...v4.0.0) (2024-03-05)
+
+
+### Breaking Changes
+
+* Dropped support for python 3.7 ([00607b8](https://github.com/alexschimpf/fastapi-versionizer/commit/00607b8f1ae0db23b7e63666b0629307a3a631dc))
+
 ## [3.0.4](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.3...v3.0.4) (2023-11-03)
 
 

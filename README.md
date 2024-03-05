@@ -8,7 +8,7 @@ This project addresses issues with `fastapi_versioning` and adds some additional
 `pip install fastapi-versionizer`
 
 ## Examples
-You can find examples in the [examples](/examples) directory.
+You can find examples in the [examples](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples) directory.
 
 ## Summary
 <b>FastAPI Versionizer</b> makes API versioning easy.
@@ -171,4 +171,4 @@ An APIRouter will be created for each version, with the URL prefix defined by th
   - Set `include_main_openapi_route` and `include_version_openapi_route` to False if you need to customize the OpenAPI schema.
   - Pass a `callback` param to `Versionizer` and add your own docs/OpenAPI routes manually for each version
   - If you want a "main" docs page, with all versioned routes included, you can manually add a docs/OpenAPI route to the versioned FastAPI app returned by `Versionizer.versionize()`.
-- See the [Docs Customization](/examples/docs_customization.py) example for more details
+- See the [Docs Customization](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/docs_customization.py) example for more details
