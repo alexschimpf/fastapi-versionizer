@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v4.0.0...v4.0.1) (2024-03-05)
+
+
+### Bug Fixes
+
+* Fixed oauth2 redirect bug for versioned routes ([17f0172](https://github.com/alexschimpf/fastapi-versionizer/commit/17f0172bf1a6cf4d4f39f94107307557facbf4ff))
+
 ## [4.0.0](https://github.com/alexschimpf/fastapi-versionizer/compare/v3.0.4...v4.0.0) (2024-03-05)
 
 
