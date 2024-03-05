@@ -2,7 +2,7 @@ from collections import defaultdict
 from enum import Enum
 from fastapi import FastAPI, APIRouter
 from fastapi.openapi.docs import get_redoc_html
-from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.openapi.docs import get_swagger_ui_html, get_swagger_ui_oauth2_redirect_html
 import fastapi.openapi.utils
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.routing import APIRoute, APIWebSocketRoute
@@ -258,16 +258,24 @@ class Versionizer:
                 return fastapi.openapi.utils.get_openapi(**openapi_params)
 
         if self._include_version_docs and self._app.docs_url is not None and self._app.openapi_url is not None:
+            openapi_url = self._build_api_url(version_prefix, self._app.openapi_url)
+            oauth2_redirect_url = self._build_api_url(
+                version_prefix, cast(str, self._app.swagger_ui_oauth2_redirect_url))
+
             @router.get(self._app.docs_url, include_in_schema=False)
             async def get_docs() -> HTMLResponse:
-                openapi_url = self._build_api_url(version_prefix, cast(str, self._app.openapi_url))
                 return get_swagger_ui_html(
                     openapi_url=openapi_url,
                     title=title,
                     swagger_ui_parameters=self._app.swagger_ui_parameters,
                     init_oauth=self._app.swagger_ui_init_oauth,
-                    oauth2_redirect_url=self._app.swagger_ui_oauth2_redirect_url
+                    oauth2_redirect_url=oauth2_redirect_url
                 )
+
+            if self._app.swagger_ui_oauth2_redirect_url:
+                @router.get(self._app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+                async def get_oauth2_redirect() -> HTMLResponse:
+                    return get_swagger_ui_oauth2_redirect_html()
 
         if self._include_version_docs and self._app.redoc_url is not None and self._app.openapi_url is not None:
             @router.get(self._app.redoc_url, include_in_schema=False)
@@ -343,7 +351,11 @@ class Versionizer:
     def _strip_routes(self) -> None:
         paths_to_keep = []
         if self._include_main_docs:
-            paths_to_keep.extend([self._app.docs_url, self._app.redoc_url])
+            paths_to_keep.extend([
+                self._app.docs_url,
+                self._app.redoc_url,
+                self._app.swagger_ui_oauth2_redirect_url
+            ])
         if self._include_main_openapi_route:
             paths_to_keep.append(self._app.openapi_url)
 
