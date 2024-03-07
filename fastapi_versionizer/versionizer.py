@@ -324,6 +324,8 @@ class Versionizer:
         version: Tuple[int, int]
     ) -> None:
         kwargs = dict(route.__dict__)
+        if route.__class__ != APIRoute:
+            kwargs['route_class_override'] = route.__class__
 
         deprecated_in_version = getattr(route.endpoint, '_deprecate_in_version', None)
         if deprecated_in_version is not None:
