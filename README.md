@@ -172,3 +172,11 @@ An APIRouter will be created for each version, with the URL prefix defined by th
   - Pass a `callback` param to `Versionizer` and add your own docs/OpenAPI routes manually for each version
   - If you want a "main" docs page, with all versioned routes included, you can manually add a docs/OpenAPI route to the versioned FastAPI app returned by `Versionizer.versionize()`.
 - See the [Docs Customization](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/docs_customization.py) example for more details
+
+## Gotchas
+
+### Static file mounts
+
+If you need to [mount static files](https://fastapi.tiangolo.com/tutorial/static-files/), you'll have to add those to
+your FastAPI app **after** instantiating Versionizer. See the [Static file mount](https://github.com/alexschimpf/fastapi-versionizer/tree/main/examples/with_static_file_mount.py)
+example for more details.
