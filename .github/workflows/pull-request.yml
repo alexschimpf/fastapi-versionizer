@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5.30
+      - uses: actions/setup-python@v5.3.0
         with:
           python-version: 3.11
       - run: pip install safety==2.3.5
