@@ -342,11 +342,13 @@ class Versionizer:
                     return router.add_api_websocket_route(**kwargs)
             except TypeError as e:
                 e_str = str(e)
-                key_start = e_str.index("'") + 1
-                key_end = e_str.rindex("'")
-                kwargs.pop(e_str[key_start:key_end])
+                error_parts = e_str.split("'")
+                if len(error_parts) < 2:
+                    raise RuntimeError(f'unknown type error: {e_str}')
+                key_to_remove = error_parts[1]
+                kwargs.pop(key_to_remove)
 
-        raise Exception('Failed to add route')
+        raise RuntimeError('Failed to add route')
 
     def _strip_routes(self) -> None:
         paths_to_keep = []

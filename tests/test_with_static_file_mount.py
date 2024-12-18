@@ -18,4 +18,4 @@ class TestWithStaticFileMount(TestCase):
 
         # Check that a static mount before instantiating Versionizer will not work
         self.assertEqual('{"detail":"Not Found"}',
-                          test_client.get('/examples-not-working/with_static_file_mount.py').text)
+                         test_client.get('/examples-not-working/with_static_file_mount.py').text)
