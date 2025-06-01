@@ -1,6 +1,8 @@
 from fastapi.testclient import TestClient
 
 from unittest import TestCase
+
+import pydantic
 from examples.simple import app, versions
 
 
@@ -134,10 +136,7 @@ class TestSimpleExample(TestCase):
         self.assertEqual(200, test_client.get('/v1/swagger').status_code)
         self.assertEqual(200, test_client.get('/v2/swagger').status_code)
         self.assertEqual(200, test_client.get('/latest/swagger').status_code)
-
-        # openapi
-        self.assertDictEqual(
-            {
+        expected_response =  {
                 'openapi': '3.1.0',
                 'info': {
                     'title': 'test',
@@ -783,7 +782,6 @@ class TestSimpleExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                'additionalProperties': True,
                                                 'type': 'object',
                                                 'title': 'Response Get Versions Versions Get'
                                             }
@@ -926,8 +924,16 @@ class TestSimpleExample(TestCase):
                         }
                     }
                 }
-            },
-            test_client.get('/api_schema.json').json()
+            }
+        if pydantic.__version__ >= "2.11.0":
+            # added 'additionalProperties': True in the /versions API
+            expected_response["paths"]["/versions"]["get"]["responses"]["200"][
+                "content"
+            ]["application/json"]["schema"]["additionalProperties"] = True
+        # openapi
+        self.assertDictEqual(
+            expected_response,
+           test_client.get('/api_schema.json').json()
         )
         self.assertDictEqual(
             {

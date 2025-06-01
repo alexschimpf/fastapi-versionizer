@@ -1,3 +1,4 @@
+import pydantic
 from fastapi import WebSocketDisconnect
 from fastapi.testclient import TestClient
 
@@ -85,8 +86,7 @@ class TestWebsocketExample(TestCase):
         self.assertEqual(200, test_client.get('/latest/swagger').status_code)
 
         # openapi
-        self.assertDictEqual(
-            {
+        expected_response = {
                 'openapi': '3.1.0',
                 'info': {
                     'title': 'test',
@@ -175,7 +175,6 @@ class TestWebsocketExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
-                                                'additionalProperties': True,
                                                 'type': 'object',
                                                 'title': 'Response Get Versions Versions Get'
                                             }
@@ -186,7 +185,14 @@ class TestWebsocketExample(TestCase):
                         }
                     }
                 }
-            },
+            }
+        if pydantic.__version__ >= "2.11.0":
+            # added 'additionalProperties': True in the /versions API
+            expected_response["paths"]["/versions"]["get"]["responses"]["200"][
+                "content"
+            ]["application/json"]["schema"]["additionalProperties"] = True
+        self.assertDictEqual(
+            expected_response,
             test_client.get('/api_schema.json').json()
         )
         self.assertDictEqual(
