@@ -1,20 +1,25 @@
-name: Deploy
+name: Deploy to PyPI
 
 on:
-  workflow_dispatch:
+  release:
+    types:
+      - published
 
 jobs:
-  release:
+  deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
-      - run: make install-dev
-      - run: make build
-      - run: make test-install-build
-      - env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: make deploy
+          
+      - name: Build the distribution
+        run: make build
+      - name: Install the package
+        run: make test-install-build
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
