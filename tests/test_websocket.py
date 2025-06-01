@@ -87,97 +87,96 @@ class TestWebsocketExample(TestCase):
 
         # openapi
         expected_response = {
-                'openapi': '3.1.0',
-                'info': {
-                    'title': 'test',
-                    'description': 'Websocket example of FastAPI Versionizer.',
-                    'termsOfService': 'https://github.com/alexschimpf/fastapi-versionizer',
-                    'version': '0.1.0'
+            'openapi': '3.1.0',
+            'info': {
+                'title': 'test',
+                'description': 'Websocket example of FastAPI Versionizer.',
+                'termsOfService': 'https://github.com/alexschimpf/fastapi-versionizer',
+                'version': '0.1.0'
+            },
+            'paths': {
+                '/v1/chatterbox': {
+                    'get': {
+                        'tags': [
+                            'Chatting'
+                        ],
+                        'summary': 'Get Explaination',
+                        'operationId': 'get_explaination_v1_chatterbox_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'string',
+                                            'title': 'Response Get Explaination V1 Chatterbox Get'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        'deprecated': True
+                    }
                 },
-                'paths': {
-                    '/v1/chatterbox': {
-                        'get': {
-                            'tags': [
-                                'Chatting'
-                            ],
-                            'summary': 'Get Explaination',
-                            'operationId': 'get_explaination_v1_chatterbox_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'string',
-                                                'title': 'Response Get Explaination V1 Chatterbox Get'
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            'deprecated': True
-                        }
-                    },
-                    '/v2/chatterbox': {
-                        'get': {
-                            'tags': [
-                                'Chatting'
-                            ],
-                            'summary': 'Get Explaination V2',
-                            'operationId': 'get_explaination_v2_v2_chatterbox_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'string',
-                                                'title': 'Response Get Explaination V2 V2 Chatterbox Get'
-                                            }
+                '/v2/chatterbox': {
+                    'get': {
+                        'tags': [
+                            'Chatting'
+                        ],
+                        'summary': 'Get Explaination V2',
+                        'operationId': 'get_explaination_v2_v2_chatterbox_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'string',
+                                            'title': 'Response Get Explaination V2 V2 Chatterbox Get'
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    '/latest/chatterbox': {
-                        'get': {
-                            'tags': [
-                                'Chatting'
-                            ],
-                            'summary': 'Get Explaination V2',
-                            'operationId': 'get_explaination_v2_latest_chatterbox_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'string',
-                                                'title': 'Response Get Explaination V2 Latest Chatterbox Get'
-                                            }
+                    }
+                },
+                '/latest/chatterbox': {
+                    'get': {
+                        'tags': [
+                            'Chatting'
+                        ],
+                        'summary': 'Get Explaination V2',
+                        'operationId': 'get_explaination_v2_latest_chatterbox_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'string',
+                                            'title': 'Response Get Explaination V2 Latest Chatterbox Get'
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    '/versions': {
-                        'get': {
-                            'tags': [
-                                'Versions'
-                            ],
-                            'summary': 'Get Versions',
-                            'operationId': 'get_versions_versions_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'object',
-                                                'title': 'Response Get Versions Versions Get'
-                                            }
+                    }
+                },
+                '/versions': {
+                    'get': {
+                        'tags': [
+                            'Versions'
+                        ],
+                        'summary': 'Get Versions',
+                        'operationId': 'get_versions_versions_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'object',
+                                            'title': 'Response Get Versions Versions Get'
                                         }
                                     }
                                 }
@@ -186,11 +185,12 @@ class TestWebsocketExample(TestCase):
                     }
                 }
             }
-        if pydantic.__version__ >= "2.11.0":
+        }
+        if pydantic.__version__ >= '2.11.0':
             # added 'additionalProperties': True in the /versions API
-            expected_response["paths"]["/versions"]["get"]["responses"]["200"][
-                "content"
-            ]["application/json"]["schema"]["additionalProperties"] = True
+            expected_response['paths']['/versions']['get']['responses']['200'][
+                'content'
+            ]['application/json']['schema']['additionalProperties'] = True
         self.assertDictEqual(
             expected_response,
             test_client.get('/api_schema.json').json()

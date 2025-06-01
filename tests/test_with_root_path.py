@@ -46,99 +46,98 @@ class TestWitRootPathExample(TestCase):
 
         # openapi
         expected_response = {
-                'openapi': '3.1.0',
-                'info': {
-                    'title': 'test',
-                    'version': '0.1.0'
-                },
-                'servers': [
-                    {
-                        'url': '/api'
+            'openapi': '3.1.0',
+            'info': {
+                'title': 'test',
+                'version': '0.1.0'
+            },
+            'servers': [
+                {
+                    'url': '/api'
+                }
+            ],
+            'paths': {
+                '/v1/status': {
+                    'get': {
+                        'tags': [
+                            'Status'
+                        ],
+                        'summary': 'Get Status V1',
+                        'operationId': 'get_status_v1_v1_status_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'string',
+                                            'title': 'Response Get Status V1 V1 Status Get'
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                ],
-                'paths': {
-                    '/v1/status': {
-                        'get': {
-                            'tags': [
-                                'Status'
-                            ],
-                            'summary': 'Get Status V1',
-                            'operationId': 'get_status_v1_v1_status_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'string',
-                                                'title': 'Response Get Status V1 V1 Status Get'
-                                            }
+                },
+                '/v2/status': {
+                    'get': {
+                        'tags': [
+                            'Status'
+                        ],
+                        'summary': 'Get Status V2',
+                        'operationId': 'get_status_v2_v2_status_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'string',
+                                            'title': 'Response Get Status V2 V2 Status Get'
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    '/v2/status': {
-                        'get': {
-                            'tags': [
-                                'Status'
-                            ],
-                            'summary': 'Get Status V2',
-                            'operationId': 'get_status_v2_v2_status_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'string',
-                                                'title': 'Response Get Status V2 V2 Status Get'
-                                            }
+                    }
+                },
+                '/latest/status': {
+                    'get': {
+                        'tags': [
+                            'Status'
+                        ],
+                        'summary': 'Get Status V2',
+                        'operationId': 'get_status_v2_latest_status_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'string',
+                                            'title': 'Response Get Status V2 Latest Status Get'
                                         }
                                     }
                                 }
                             }
                         }
-                    },
-                    '/latest/status': {
-                        'get': {
-                            'tags': [
-                                'Status'
-                            ],
-                            'summary': 'Get Status V2',
-                            'operationId': 'get_status_v2_latest_status_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'string',
-                                                'title': 'Response Get Status V2 Latest Status Get'
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    '/versions': {
-                        'get': {
-                            'tags': [
-                                'Versions'
-                            ],
-                            'summary': 'Get Versions',
-                            'operationId': 'get_versions_versions_get',
-                            'responses': {
-                                '200': {
-                                    'description': 'Successful Response',
-                                    'content': {
-                                        'application/json': {
-                                            'schema': {
-                                                'type': 'object',
-                                                'title': 'Response Get Versions Versions Get'
-                                            }
+                    }
+                },
+                '/versions': {
+                    'get': {
+                        'tags': [
+                            'Versions'
+                        ],
+                        'summary': 'Get Versions',
+                        'operationId': 'get_versions_versions_get',
+                        'responses': {
+                            '200': {
+                                'description': 'Successful Response',
+                                'content': {
+                                    'application/json': {
+                                        'schema': {
+                                            'type': 'object',
+                                            'title': 'Response Get Versions Versions Get'
                                         }
                                     }
                                 }
@@ -147,11 +146,12 @@ class TestWitRootPathExample(TestCase):
                     }
                 }
             }
-        if pydantic.__version__ >= "2.11.0":
+        }
+        if pydantic.__version__ >= '2.11.0':
             # added 'additionalProperties': True in the /versions API
-            expected_response["paths"]["/versions"]["get"]["responses"]["200"][
-                "content"
-            ]["application/json"]["schema"]["additionalProperties"] = True
+            expected_response['paths']['/versions']['get']['responses']['200'][
+                'content'
+            ]['application/json']['schema']['additionalProperties'] = True
         self.assertDictEqual(
             expected_response,
             test_client.get('/api/api_schema.json').json()
