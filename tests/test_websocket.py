@@ -175,6 +175,7 @@ class TestWebsocketExample(TestCase):
                                     'content': {
                                         'application/json': {
                                             'schema': {
+                                                'additionalProperties': True,
                                                 'type': 'object',
                                                 'title': 'Response Get Versions Versions Get'
                                             }
