@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import pydantic
 from fastapi import WebSocketDisconnect
 from fastapi.testclient import TestClient
@@ -86,7 +87,7 @@ class TestWebsocketExample(TestCase):
         self.assertEqual(200, test_client.get('/latest/swagger').status_code)
 
         # openapi
-        expected_response = {
+        expected_response: Dict[str, Any] = {
             'openapi': '3.1.0',
             'info': {
                 'title': 'test',

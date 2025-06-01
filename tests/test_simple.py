@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from fastapi.testclient import TestClient
 
 from unittest import TestCase
@@ -136,7 +137,7 @@ class TestSimpleExample(TestCase):
         self.assertEqual(200, test_client.get('/v1/swagger').status_code)
         self.assertEqual(200, test_client.get('/v2/swagger').status_code)
         self.assertEqual(200, test_client.get('/latest/swagger').status_code)
-        expected_response = {
+        expected_response: Dict[str, Any] = {
             'openapi': '3.1.0',
             'info': {
                 'title': 'test',
