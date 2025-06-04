@@ -1,20 +1,54 @@
-name: Deploy
+name: Deploy to PyPI
 
 on:
-  workflow_dispatch:
+  release:
+    types:
+      - published
 
 jobs:
-  release:
+  publish-to-test-pypi:
     runs-on: ubuntu-latest
+    environment:
+      name: test
+    permissions:
+      id-token: write
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
-      - run: make install-dev
-      - run: make build
-      - run: make test-install-build
-      - env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: make deploy
+          
+      - name: Build the distribution
+        run: make build
+      - name: Install the package
+        run: make test-install-build
+      - name: Publish package distributions to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-to-pypi:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    # if release to test PyPI fails, still run this job
+    # since we can check the reason for failure manually
+    # before approving the release
+    if: always()
+    needs: publish-to-test-pypi
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+          
+      - name: Build the distribution
+        run: make build
+      - name: Install the package
+        run: make test-install-build
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
