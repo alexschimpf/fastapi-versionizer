@@ -5,11 +5,11 @@
     "keywords": [],
     "version": "4.0.1",
     "devDependencies": {
-        "@commitlint/cli": "^17.7.1",
-        "@commitlint/config-conventional": "^17.7.0",
+        "@commitlint/cli": "^19.8.1",
+        "@commitlint/config-conventional": "^19.8.1",
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/git": "^10.0.1",
-        "semantic-release": "^21.1.1"
+        "semantic-release": "^24.2.5"
     },
     "scripts": {
         "release": "pnpm exec semantic-release"
