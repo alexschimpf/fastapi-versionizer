@@ -3,7 +3,7 @@
     "author": "Alex Schimpf",
     "description": "FastAPI Versionizer",
     "keywords": [],
-    "version": "4.0.1",
+    "version": "4.0.2",
     "devDependencies": {
         "@commitlint/cli": "^19.8.1",
         "@commitlint/config-conventional": "^19.8.1",

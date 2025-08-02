@@ -1,3 +1,12 @@
+## <small>4.0.2 (2025-08-02)</small>
+
+* fix: Fix release workflow (#70) ([1f05f44](https://github.com/alexschimpf/fastapi-versionizer/commit/1f05f44)), closes [#70](https://github.com/alexschimpf/fastapi-versionizer/issues/70)
+* fix: Update pnpm dependencies lock file (#71) ([8d87636](https://github.com/alexschimpf/fastapi-versionizer/commit/8d87636)), closes [#71](https://github.com/alexschimpf/fastapi-versionizer/issues/71)
+* fix (compatibility): Python3.13 compatibility (#63) ([3025a3a](https://github.com/alexschimpf/fastapi-versionizer/commit/3025a3a)), closes [#63](https://github.com/alexschimpf/fastapi-versionizer/issues/63)
+* chore: Update pnpm version and dependencies' versions (#67) ([8c15032](https://github.com/alexschimpf/fastapi-versionizer/commit/8c15032)), closes [#67](https://github.com/alexschimpf/fastapi-versionizer/issues/67)
+* chore: update release action to dispatch and deploy to "on release" (#68) ([eeb1c5e](https://github.com/alexschimpf/fastapi-versionizer/commit/eeb1c5e)), closes [#68](https://github.com/alexschimpf/fastapi-versionizer/issues/68)
+* docs: Document static file mount gotcha ([f92f054](https://github.com/alexschimpf/fastapi-versionizer/commit/f92f054))
+
 ## [4.0.1](https://github.com/alexschimpf/fastapi-versionizer/compare/v4.0.0...v4.0.1) (2024-03-05)
 
 
