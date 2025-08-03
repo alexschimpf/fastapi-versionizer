@@ -1,3 +1,7 @@
+## <small>4.0.3 (2025-08-03)</small>
+
+* fix: Fix README.md pypi rendering by adding a new line (#73) ([ed720ca](https://github.com/alexschimpf/fastapi-versionizer/commit/ed720ca)), closes [#73](https://github.com/alexschimpf/fastapi-versionizer/issues/73)
+
 ## <small>4.0.2 (2025-08-02)</small>
 
 * fix: Fix release workflow (#70) ([1f05f44](https://github.com/alexschimpf/fastapi-versionizer/commit/1f05f44)), closes [#70](https://github.com/alexschimpf/fastapi-versionizer/issues/70)
